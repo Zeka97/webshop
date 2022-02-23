@@ -1,0 +1,218 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+body{
+    font-family: 'Montserrat', sans-serif;
+}
+
+.header{
+    display: flex;
+    justify-content: center;
+    height: 100px;
+    background-image: linear-gradient(to right, #1D1234, #610E80);
+}
+.header nav{
+    display: flex;
+    width: 8%;
+    height: 50px;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    margin: auto 10px auto 10px;
+}
+.header nav a{
+    text-decoration: none;
+    color: white;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 800;
+}
+
+.naslov-artikala{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100px;
+}
+
+
+
+.artikli{
+    height: auto;
+    display: grid;
+    margin-left: 3%;
+    grid-template-columns: 30% 30% 30%;
+    grid-gap: 2%;
+    padding-bottom: 30px;
+}
+.artikal{
+    height: 100%;
+    width: auto;
+    display: flex;
+    border: 1px solid #d3d3d3;
+    border-radius: 12px;
+}
+
+.artikal:hover{
+    transition: 0.4s ease;
+    border-color: #FE7F54;
+    cursor: pointer;
+    box-shadow: rgba(99, 99, 99, 0.2) 0px 2px 8px 0px;
+}
+
+.artikal .slika{
+    height: 100%;
+    width: 100%;
+    background-size: cover;
+}
+
+.artikal .slika img{
+    border-radius: 12px 0px 0px 12px;
+}
+
+.artikal .opis{
+    width: 100%;
+    margin-left: 30px;
+}
+
+.artikal .opis h2{
+    margin-top: 20px;
+    font-family: 'Montserrat', 'sans-serif';
+    font-weight: 600;
+}
+
+.artikal .opis p{
+    font-family: 'Montserrat', 'sans-serif';
+    font-weight: 400;
+}
+
+.artikal .opis button{
+    width: 100%;
+    margin-bottom: 10px;
+}
+.artikal .opis button:hover{
+    cursor: pointer;
+}
+
+.modal-slika{
+    width: 40%;
+}
+.header_artikla{
+    display: flex;
+    width: 100%;
+}
+.o_artiklu{
+    margin-left: 50px;
+    width: 60%;
+}
+.dodatne_kategorije{
+    display: grid;
+    grid-template-columns: 35% 30% 30%;
+}
+.dodatne_kategorije div p{
+    font-weight: bold;
+}
+
+.artikal_opis{
+    height: 300px;
+}
+
+#naziv_trgovine{
+    font-weight: bold;
+    text-decoration: underline;
+}
+#naziv_trgovine:hover{
+    cursor: pointer;
+}
+#artikal_kolicina{
+    padding-left: 20px;
+}
+.kolicina_usera p{
+    display: flex;
+    justify-content: center;
+}
+.kolicina_usera div{
+    display: flex;
+    justify-content: center;
+    width: 100%;
+    font-size: 30px;
+}
+.kolicina_usera span:hover{
+    cursor: pointer;
+}
+.icona{
+    position: absolute;
+    right: 50px;
+    bottom: 30px;
+    width: 80px;
+    height: 80px;
+}
+.icona:hover{
+    cursor: pointer;
+    opacity: 0.7;
+}
+
+.message-dropdown{
+    font-size: 13px;
+    position: absolute;
+    right: 50px;
+    bottom: 120px;
+    height: 500px;
+    width: 400px;
+    border: 1px solid black;
+    background-color: white;
+    display: flex;
+}
+.hide{
+    display: none;
+}
+.useri{
+    border-right: 1px solid black;
+    width: 30%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.useri button{
+    width: 100px;
+    margin-bottom: 10px;
+}
+
+.useri button:hover{
+    cursor: pointer;
+}
+
+
+.poruke{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 90%;
+    overflow-y: auto;
+}
+.salji{
+    height: 10%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.salji input {
+    width: 75%;
+}
+
+.poruka-box{
+    width: 90%;
+    height: auto;
+    margin-top: 10px;
+    border-radius: 5px;
+    border: 1px solid black;
+
+}
+
+.poruka-naslov{
+    font-size: 12px;
+    width: 100%;
+}
+
+.poruka-opis{
+    font-size: 13px;
+    margin-left: 20px;
+}
+

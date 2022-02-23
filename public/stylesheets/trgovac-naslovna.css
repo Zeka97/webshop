@@ -1,0 +1,335 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+body{
+    margin: 0;
+    padding: 0;
+}
+
+.trgovac-mainpage{
+    height: 100vh;
+    width: 100%;
+
+}
+.header{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 200px;
+    margin-top: 30px;
+    font-family: 'Montserrat', 'sans-serif';
+}
+
+.header input{
+    width: 40%;
+    height: 35px;
+    margin-bottom: 20px;
+    border-radius: 4px;
+    padding-left: 20px;
+    border: 1px solid;
+    border-color: #B4B4B4;
+    outline: none;
+}
+
+.header button{
+    padding: 10px 20px;
+    border-radius: 4px;
+    border: 1px solid;
+    border-color: #B4B4B4;
+    outline: none;
+    margin-bottom: 20px;
+}
+
+.cover-photo{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 50%;
+    width: 100%;
+    background-image: url("../images/background_image2.png");
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+.otrgovcu{
+    background-color: white;
+    height: 70%;
+    width: 70%;
+}
+.edit-profile h3{
+    margin-top: 30px;
+    display: inline-block;
+    width: 70px;
+    margin-left: 50px;
+}
+.edit-profile span{
+    font-size: 10px;
+    border-bottom: 0.5px solid black;
+}
+.otrgovcu-details{
+    display: flex;
+    width: 90%;
+}
+.otrgovcu-details img{
+    margin-left: 50px;
+    border-radius: 10px;
+    margin-left: 50px;
+    border-radius: 10px;
+    border: 1px solid;
+    border-color: #B4B4B4;
+}
+.trgovac-podaci{
+    width: 70%;
+}
+.trgovac-podaci h2{
+    font-family: 'Montserrat', 'sans-serif';
+    font-weight: 800;
+    margin-left: 20px;
+    margin-left: 20px;
+}
+.podaciusera{
+    font-family: 'Montserrat', 'sans-serif';
+    font-weight: 400;
+    width: 100%;
+    display: flex;
+    font-size: 13px;
+}
+.podaciusera span{
+    width: 200px;
+    height: 30px;
+    margin-left: 20px;
+}
+.buttons{
+    margin-left: 20px;
+    width: 100%;
+    font-family: 'Montserrat', 'sans-serif';
+    font-weight: 400;
+}
+.buttons button{
+    margin-right: 10px;
+    outline: none;
+    background-color: #610E80;
+    border-radius: 4px;
+    padding: 5px 10px;
+    border: 1px solid;
+    border-color: #610E80;
+    color: white;
+}
+.buttons button:hover{
+    background-color: #FE7F54;
+    border-color: #FE7F54;
+    cursor: pointer;
+}
+.buttons button a{
+    text-decoration: none;
+    color: white;
+}
+
+.artikli{
+    display: grid;
+    margin-left: 20px;
+    grid-template-columns: 32% 32% 32%;
+    grid-gap: 20px;
+    padding-bottom:  100px;
+}
+
+.artikal{
+    height: 300px;
+    width: auto;
+    display: flex;
+    border: 1px solid black;
+    border-radius: 12px;
+    border-color: #B4B4B4;
+}
+
+.artikal .slika{
+    height: 100%;
+    width: 100%;
+    background-image: cover;
+}
+
+.artikal .slika img{
+    height: 100%;
+    width: 100%;
+    object-fit: cover;
+    border-radius: 12px 0px 0px 12px;
+}
+
+.artikal .opis{
+    width: 100%;
+    margin-left: 30px;
+    font-family: 'Montserrat', 'sans-serif';
+}
+
+.artikal .opis button{
+    width: 80%;
+    margin-bottom: 10px;
+    background-color: #610E80;
+    color: white;
+    border-radius: 8px;
+    border-color: #610E80;
+    outline: none;
+}
+
+.artikal .opis button:hover{
+    cursor: pointer;
+}
+
+
+.up:hover,
+.up:focus {
+    box-shadow: inset 0 -3.25em 0 0 var(--hover);
+}
+
+.up {
+    --color: #e4cb58;
+    --hover: #94e458;
+}
+
+.up {
+    color: var(--color);
+    transition: 1s;
+}
+.up:hover, .up:focus {
+    border-color: var(--hover);
+    color: #fff;
+    cursor: pointer;
+}
+
+.up {
+    background: none;
+    border: 2px solid;
+    font: inherit;
+    line-height: 1;
+}
+
+
+.noarticles{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.interesi{
+    width: 80%;
+    user-select: none;
+}
+.interes{
+    width: auto;
+    padding: 10px 10px 10px 10px;
+    display: inline-block;
+    border: 1px solid #D8D8D8;
+    border-radius: 6px;
+    margin: 10px 5px 0px 0px;
+}
+.interesi input{
+    height: 10px;
+    width: 20px;
+}
+.interesi:hover{
+    cursor: pointer;
+}
+.kliknuto{
+    width: auto;
+    padding: 10px 10px 10px 10px;
+    background-color: #CBFFD6;
+    display: inline-block;
+    border: 1px solid #2aff07;
+    border-radius: 6px;
+    margin: 10px 5px 0px 0px;
+}
+.kliknuto:hover{
+    cursor: pointer;
+}
+
+.ime_i_prezime{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+}
+.hint{
+    font-weight: bold;
+}
+
+.icona{
+    position: absolute;
+    right: 50px;
+    bottom: 30px;
+    width: 80px;
+    height: 80px;
+}
+.icona:hover{
+    cursor: pointer;
+    opacity: 0.7;
+}
+
+.message-dropdown{
+    font-size: 13px;
+    position: absolute;
+    right: 50px;
+    bottom: 120px;
+    height: 500px;
+    width: 400px;
+    border: 1px solid black;
+    background-color: white;
+    display: flex;
+}
+.hide{
+    display: none;
+}
+.useri{
+    border-right: 1px solid black;
+    width: 30%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.message-box{
+     width: 70%;
+}
+
+
+.useri button{
+    width: 100px;
+    margin-bottom: 10px;
+}
+
+.useri button:hover{
+    cursor: pointer;
+}
+
+
+.poruke{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 90%;
+    overflow-y: auto;
+}
+.salji{
+    height: 10%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.salji input {
+    width: 75%;
+}
+
+.poruka-box{
+    width: 90%;
+    height: auto;
+    margin-top: 10px;
+    border-radius: 5px;
+    border: 1px solid black;
+
+}
+
+.poruka-naslov{
+    font-size: 12px;
+    width: 100%;
+}
+
+.poruka-opis{
+    font-size: 13px;
+    margin-left: 20px;
+}

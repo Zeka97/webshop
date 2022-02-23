@@ -1,0 +1,195 @@
+body{
+    margin: 0;
+    padding: 0;
+    font-family: 'Gilroy', sans-serif;
+}
+.container{
+    background-image: url("../images/background_image2.png");
+    background-repeat: no-repeat;
+    background-size: cover;
+    opacity: 1;
+    height: 100vh;
+    width: 100%;
+    display: flex;
+    flex-direction: row;
+    font: normal normal medium 16px/21px Gilroy ☞;
+}
+.left-container{
+    width: 50%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.left-container h1{
+    padding-top: 5%;
+    text-align: left;
+    font: normal normal 800 20px/27px Gilroy;
+    letter-spacing: 0px;
+    color: #FFFFFF;
+    opacity: 1;
+}
+.right-container{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 50%;
+    height: 100%;
+}
+.right-container h1{
+    font-size: 140px;
+    text-align: left;
+    font: normal normal 800 152px/202px Gilroy;
+    letter-spacing: 0px;
+    color: #FFFFFF;
+    opacity: 1;
+}
+.right-container p{
+    text-align: left;
+    font: normal normal 800 46px/62px Gilroy;
+    letter-spacing: 0px;
+    color: #FFFFFF80;
+    opacity: 1;
+}
+.form{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 70%;
+    height: 70%;
+    background-color: white;
+    border-radius: 10px;
+}
+.mainbox{
+    display: flex;
+    flex-direction: column;
+    width: 80%;
+    height: 100%;
+}
+.sign-buttons{
+    height: 20%;
+    width: auto;
+    display: flex;
+    align-items: center;
+}
+.sign-buttons span{
+    width: 120px;
+    font-size: 40px;
+    border-bottom:  3px solid #48DDB8 ;
+    text-align: left;
+    font: normal normal 800 40px/53px Gilroy;
+    letter-spacing: 0px;
+    color: #48DDB8;
+    opacity: 1;
+}
+.login_form{
+    height: 80%;
+    display: flex;
+    flex-direction: column;
+}
+.email_container{
+    height: 100px;
+    display: flex;
+    flex-direction: column;
+}
+.email_container input{
+    height: 45px;
+    width: 100%;
+    background: #FCFCFC 0% 0% no-repeat padding-box;
+    border: 1px solid #E0E0E0;
+    border-radius: 4px;
+    opacity: 1;
+}
+.email_container input:focus{
+    background: #FFFFFF 0% 0% no-repeat padding-box;
+    outline:none;
+    border: 1px solid #48DDB8;
+    border-radius: 4px;
+    opacity: 1;
+}
+.password_container{
+    height: 60px;
+    display: flex;
+    flex-direction: column;
+}
+.password_container input{
+    height: 45px;
+    width: 100%;
+    background: #FCFCFC 0% 0% no-repeat padding-box;
+    border: 1px solid #E0E0E0;
+    border-radius: 4px;
+    opacity: 1;
+}
+.password_container input:focus{
+    outline:none;
+    background: #FFFFFF 0% 0% no-repeat padding-box;
+    border: 1px solid #48DDB8;
+    border-radius: 4px;
+    opacity: 1;
+}
+.login_form label{
+    font: normal normal bold 16px/21px Gilroy ☞;
+    letter-spacing: 1.6px;
+    color: #000000;
+    opacity: 1;
+}
+.rememberme-forgetpassword{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    height: 50px;
+    text-align: left;
+}
+.rememberme-forgetpassword div label{
+    text-align: left;
+    font: normal normal medium 16px/21px Gilroy ☞;
+    letter-spacing: 0px;
+    color: #B4B4B4;
+    opacity: 1;
+}
+.forgetpassword{
+    text-align: left;
+    font: normal normal medium 16px/21px Gilroy ☞;
+    letter-spacing: 0px;
+    color: #B4B4B4;
+    opacity: 1;
+}
+.signinandcreatebuttons{
+    display: flex;
+    flex-direction: column;
+    padding-top: 20px;
+    height: 150px;
+    justify-content: space-around;
+}
+.signinbutton{
+    height: 50px;
+    color: white;
+    border: 1px solid #48DDB8;
+    background: #48DDB8 0% 0% no-repeat padding-box;
+    border-radius: 4px;
+    opacity: 1;
+}
+.signinbutton:hover{
+    cursor: pointer;
+    opacity: 0.6;
+}
+.createbutton{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 50px;
+    color:#48DDB8;
+    border: 1px solid #48DDB8;
+    outline: none;
+    text-decoration: none;
+}
+.createbutton:hover{
+    cursor: pointer;
+    opacity: 0.5;
+}
+#block-message{
+    color: red;
+}

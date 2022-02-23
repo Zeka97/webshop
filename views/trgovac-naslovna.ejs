@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Trgovac naslovna</title>
+    <link rel='stylesheet' href='/stylesheets/trgovac-naslovna.css' />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+            function signout(){
+                $.ajax({
+                    url: "/trgovac/signout",
+                    data:{},
+                    type:'GET',
+                    beforeSend: function(){}
+                }).done(function(data){
+                    window.location.href = "/login";
+                })
+
+
+            }
+
+            function pogledajArtikal(id){
+                $.ajax({
+                    url: "/trgovac/artikal/" + id,
+                    data:{},
+                    type:'GET',
+                    beforeSend: function(){}
+                }).done(function(){
+                    window.location.href = "/trgovac/artikal/" + id;
+                })
+
+
+
+            }
+
+            var niz = [];
+            var kategorije = [];
+            function klikninadiv(key){
+                //var elem = document.getElementById(key);
+                if(niz[key-1] == true) {
+                    //elem.style.backgroundColor = "yellow";
+                    $("#" + key).addClass("interes");
+                    $("#" + key).removeClass("kliknuto");
+                    $("#" + key + "edit").addClass("interes");
+                    $("#" + key + "edit").removeClass("kliknuto");
+                    niz[key-1] = false;
+                }
+                else{
+                    $("#" + key).addClass("kliknuto");
+                    $("#" + key).removeClass("interes");
+                    $("#" + key + "edit").addClass("kliknuto");
+                    $("#" + key + "edit").removeClass("interes");
+                    niz[key-1] = true;
+                    console.log(niz[key-1]);
+                }
+                console.log(niz);
+            }
+
+
+            function kreirajArtikal(){
+                let naziv = document.getElementById("naziv").value;
+                let cijena = document.getElementById("cijena").value;
+                let kolicina = document.getElementById("kolicina").value;
+                let opis = document.getElementById("opisartikla").value;
+                let slikaartikla = document.getElementById("artikal_avatar").files
+                let artikal_avatar = new FormData();
+
+                artikal_avatar.append("artikal_avatar",slikaartikla[0])
+
+                let kategorije = []
+                for(let i = 0; i < niz.length; i++) {
+                    if (niz[i] == true)
+                        kategorije.push(i + 1);
+                }
+                let obj = {
+                    naziv: naziv,
+                    cijena: cijena,
+                    kolicina: kolicina,
+                    opis: opis,
+                    kategorije: kategorije
+                }
+
+
+                $.ajax({
+                    url:"/trgovac/upload/artikalslika",
+                    cache:false,
+                    type: 'POST',
+                    contentType: false,
+                    processData: false,
+                    data: artikal_avatar,
+                    beforeSend: function (){},
+                })
+                    .done(function(){
+                        $.ajax({
+                            url: "/trgovac/dodajArtikal",
+                            data:JSON.stringify(obj),
+                            type:'POST',
+                            contentType:"application/json",
+                            beforeSend: function(){},
+                        }).done(function(){
+                            alert("Uspjesno ste dodali artikal");
+                            setTimeout(() => {
+                                location.reload()
+                            },3000);
+                        })
+                    })
+            }
+
+            var editartikal = {
+                id: null
+            };
+
+            function Edit(artikal) {
+                document.getElementById('edit-naziv').value = artikal.naziv;
+                document.getElementById('edit-opisartikla').value = artikal.opis;
+                document.getElementById('edit-kolicina').value = artikal.kolicina;
+                document.getElementById('edit-cijena').value = artikal.cijena;
+                editartikal.id = artikal.id;
+            }
+
+            function EditArtikal(){
+                let naziv =  document.getElementById('edit-naziv').value;
+                let opisartikla = document.getElementById('edit-opisartikla').value;
+                let kolicina = document.getElementById('edit-kolicina').value;
+                let cijena = document.getElementById('edit-cijena').value;
+                let kategorije = [];
+
+                for(let i = 0; i < niz.length; i++){
+                    if(niz[i] == true){
+                        kategorije.push(i+1);
+                    }
+                }
+
+                let slikaartikla = document.getElementById("edit_artikal_avatar").files
+                let edit_artikal_avatar = new FormData();
+
+                edit_artikal_avatar.append("edit_artikal_avatar",slikaartikla[0]);
+
+                editartikal.naziv = naziv;
+                editartikal.opisartikla = opisartikla;
+                editartikal.kolicina = kolicina;
+                editartikal.cijena = cijena;
+                editartikal.kategorije = kategorije;
+
+
+                $.ajax({
+                    url:"/trgovac/upload/editartikalslika",
+                    cache:false,
+                    type: 'POST',
+                    contentType: false,
+                    processData: false,
+                    data: edit_artikal_avatar,
+                    beforeSend: function (){},
+                    error: function(){
+                        $.ajax({
+                            url: "/trgovac/editartikal",
+                            data:JSON.stringify(editartikal),
+                            type:'POST',
+                            contentType:"application/json",
+                            beforeSend: function(){},
+                        }).done(function(){
+                            alert("Uspjesno ste editovali artikal");
+                            setTimeout(() => {
+                                location.reload()
+                            },3000);
+                        })
+                }
+                })
+                    .done(function(){
+                        $.ajax({
+                            url: "/trgovac/editartikal",
+                            data:JSON.stringify(editartikal),
+                            type:'POST',
+                            contentType:"application/json",
+                            beforeSend: function(){},
+                        }).done(function(){
+                            alert("Uspjesno ste editovali artikal");
+                            setTimeout(() => {
+                                location.reload()
+                            },3000);
+                        })
+                    })
+            }
+
+            function filter(artikli){
+                let filter = document.getElementById("search").value;
+                let regex = new RegExp(filter, "gi");
+                let noviniz = [];
+                artikli.filter(p => {
+                    if(p.naziv.match(filter))
+                        noviniz.push(p);
+                })
+
+                filteredNiz = noviniz;
+
+                console.log(filteredNiz);
+            }
+
+            function obrisiArtikal(id){
+                console.log(id);
+                $.ajax({
+                    url: "/trgovac/artikal/delete/" + id,
+                    data:{},
+                    type:'POST',
+                    beforeSend: function(){}
+                }).done(function(){
+                    alert("Uspjesno ste obrisali artikal");
+                    setTimeout(() =>{
+                        location.reload();
+                    },3000)
+                })
+            }
+
+
+            function updateProfile(){
+                let ime = document.getElementById('trgovac-ime').value;
+                let prezime = document.getElementById('trgovac-prezime').value;
+                let adresa = document.getElementById('trgovac-adresa').value;
+                let email = document.getElementById('trgovac-email').value;
+                let drzava = document.getElementById('trgovac-drzava').value;
+                let grad= document.getElementById('trgovac-grad').value
+                let imefirme = document.getElementById('trgovac-firma-naziv').value;
+                let firma_tel = document.getElementById('trgovac-firma_tel').value;
+                let password = document.getElementById('trgovac-password').value;
+                let slikatrgovca = document.getElementById('trgovac_avatar').files;
+                let trgovac_avatar = new FormData();
+
+                trgovac_avatar.append("trgovac_avatar",slikatrgovca[0]);
+
+                let obj = {
+                    ime:ime,
+                    prezime:prezime,
+                    adresa: adresa,
+                    email: email,
+                    drzava: drzava,
+                    grad: grad,
+                    imefirme: imefirme,
+                    firma_tel: firma_tel,
+                    password: password
+                }
+                $.ajax({
+                    url:"/trgovac/editupload/trgovacslika",
+                    cache:false,
+                    type:'POST',
+                    contentType: false,
+                    processData: false,
+                    data: trgovac_avatar,
+                    beforeSend: function (){},
+                    error: function(){
+                        $.ajax({
+                            url: "/trgovac/editprofile",
+                            data:JSON.stringify(obj),
+                            type:'POST',
+                            contentType:'application/json',
+                            beforeSend: function(){}
+                        }).done(function(){
+                            alert("Uspjesno ste promjenili podatke");
+                            location.reload();
+                        })
+                    }
+                }).done(function (){
+                    $.ajax({
+                        url: "/trgovac/editprofile",
+                        data:JSON.stringify(obj),
+                        type:'POST',
+                        contentType:'application/json',
+                        beforeSend: function(){}
+                    }).done(function(){
+                        alert("Uspjesno ste promjenili podatke");
+                        location.reload();
+                    })
+                })
+
+
+            }
+
+            function changePassword(){
+                let currentpassword = document.getElementById('current-password').value;
+                let newpassword = document.getElementById('new-password').value;
+                let confirmnewpassword = document.getElementById('confirmnew-password').value;
+
+                if(newpassword !== confirmnewpassword)
+                {
+                    document.getElementById("greska").innerHTML = "Pogresno ste unijeli novu sifru";
+                }
+                else{
+                    document.getElementById("greska").innerHTML = '';
+                    $.ajax({
+                        url: "/trgovac/changepassword/" + currentpassword +"/" + newpassword,
+                        data:{},
+                        type:'POST',
+                        error: function (error){
+                            console.log(error);
+                        },
+                        beforeSend: function(){},
+                    }).done(function(data){
+                        $.ajax({
+                            url: "/trgovac/signout",
+                            data:{},
+                            type:'GET',
+                            beforeSend: function(){}
+                        }).done(function(data){
+                            alert("Uspjesno promjenjena sifra, molimo logujte se ponovo");
+                            window.location.href = "/login";
+                        })
+                    })
+                }
+
+
+            }
+
+
+            var messenger = false;
+            function otvoriChat(){
+                if(messenger === false) {
+                    $('#messenger').addClass('message-dropdown');
+                    $('#messenger').removeClass('hide')
+                    messenger = true;
+                }
+                else if(messenger === true){
+                    $('#messenger').addClass('hide');
+                    $('#messenger').removeClass('"message-dropdown')
+                    messenger = false;
+                }
+            }
+
+
+
+
+
+
+    </script>
+</head>
+<body>
+      <div class="trgovac-mainpage">
+            <div class="cover-photo">
+
+                <div class="otrgovcu">
+                    <div class="edit-profile">
+                        <h3>Profil</h3>
+                        <span data-toggle="modal" data-target="#editprofile">Uredi svoj profil</span>
+                        <span onclick="signout()">Sign out</span>
+                    </div>
+                    <div class="otrgovcu-details">
+                        <img src="../uploads/<%=trgovac.photo%>" height="150px" width="200px" />
+                        <div class="trgovac-podaci">
+                                <h2><%=trgovac.ime%> <%=trgovac.prezime%></h2>
+                                <div class="podaciusera">
+                                    <span><%=trgovac.adresa%></span>
+                                    <span><%=trgovac.kontakt_tel%></span>
+                                </div>
+                                <div class="podaciusera">
+                                    <span><%=trgovac.email%></span>
+                                    <span>Bosna i Hercegovina</span>
+                                </div>
+                                <div class="buttons">
+                                    <button><a href="/trgovac/narudzbe">Narudzbe</a></button>
+                                    <button>Poruke</button>
+                                    <button data-toggle="modal" data-target="#exampleModalCenter">Dodajte artikal</button>
+                                    <button data-toggle="modal" data-target="#passwordchange">Change your password</button>
+                                </div>
+                        </div>
+
+                    </div>
+
+
+                </div>
+
+
+            </div>
+
+          <div class="trgovac-artikli">
+              <div class="header">
+                    <h1>Vasi artikli</h1>
+                    <input onchange="filter(<%=JSON.stringify(artikli)%>)" id="search" type="text" value="" placeholder="Potrazi svoj artikal" />
+                    <button onclick="">Search</button>
+              </div>
+              <%if(artikli.length){%>
+              <div class="artikli" id="artikli">
+                    <%artikli.forEach(artikal => { %>
+                        <div class="artikal" id="<%=artikal.id%>">
+                            <div class="slika">
+                                <img src="../uploads/<%=artikal.photo%>" alt="slika-proizvoda" height="100%" width="100%"/>
+                            </div>
+                            <div class="opis">
+                                <h2> <%=artikal.naziv%></h2>
+                                <p><%=artikal.opis%></p>
+                                <p><%=artikal.cijena%> KM</p>
+                                <button data-toggle="modal" data-target="#editmodal" onclick="Edit(<%=JSON.stringify(artikal)%>)">EDIT</button>
+                                <button onclick="obrisiArtikal(<%=artikal.id%>)">Delete</button>
+                            </div>
+                        </div>
+
+
+
+                  <%})%>
+
+              </div>
+              <%}%>
+              <%if(!artikli.length){%>
+                  <div  class="noarticles">
+                        <h1>Nemate artikala na svom profilu</h1>
+                        <button class="up" data-toggle="modal" data-target="#exampleModalCenter">Dodajte artikal</button>
+                  </div>
+              <%}%>
+
+          </div>
+
+      </div>
+      <!-- -----------------------------------------------------------------Modal  ADD ARTICLE ------------------------------------------------------------------------------------------------------>
+
+
+      <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+              <div class="modal-content">
+                  <div class="modal-header">
+                      <h5 class="modal-title" id="exampleModalLongTitle">Dodaj  ARTIKAL</h5>
+                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                      </button>
+                  </div>
+                  <div class="modal-body">
+                          <div class="form-group">
+                              <label>Naziv artikla</label>
+                              <input type="text" class="form-control" id="naziv" placeholder="Unesite naziv artikla...">
+                          </div>
+                          <div class="mb-3">
+                              <label for="formFile" class="form-label">Dodajte sliku artikla</label>
+                              <input class="form-control" type="file" id="artikal_avatar" name="artikal_avatar" accept="image/png, image/jpeg">
+                          </div>
+                        <div class="form-group">
+                          <label>Cijena</label>
+                          <input type="text" class="form-control" id="cijena" placeholder="Example: 30">
+                        </div>
+                      <div class="form-group">
+                          <label>Kolicina proizvoda</label>
+                          <input type="text" class="form-control" id="kolicina" placeholder="Example: 1">
+                      </div>
+                      <div class="mb-3">
+                          <label for="exampleFormControlTextarea1" class="form-label">Opis artikla</label>
+                          <textarea class="form-control" rows="3" id="opisartikla"></textarea>
+                      </div>
+                      <div class="interesi">
+                          <h4>Kategorije</h4>
+                          <%kategorije.forEach(kategorija=> { %>
+                          <div onclick="klikninadiv(<%=kategorija.id%>)" class="interes" id="<%=kategorija.id%>">
+                              <%=kategorija.naziv%>
+                          </div>
+                          <%})%>
+                      </div>
+                  </div>
+                  <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                      <button type="button" class="btn btn-primary" onclick="kreirajArtikal()">Save changes</button>
+                  </div>
+              </div>
+          </div>
+      </div>
+
+<!--------------------------------------------------EDIT MODAL ----------------------------------------------->
+
+      <div class="modal fade" id="editmodal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+              <div class="modal-content">
+                  <div class="modal-header">
+                      <h5 class="modal-title" id="exampleModalLongTitle">EDIT ARTIKAL</h5>
+                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                      </button>
+                  </div>
+                  <div class="modal-body">
+                      <div class="form-group">
+                          <label>Naziv artikla</label>
+                          <input type="text" class="form-control" id="edit-naziv" placeholder="Unesite naziv artikla...">
+                      </div>
+                      <div class="mb-3">
+                          <label for="formFile" class="form-label">Dodajte sliku artikla</label>
+                          <input class="form-control" type="file" id="edit_artikal_avatar" name="artikal_avatar" accept="image/png, image/jpeg">
+                      </div>
+                      <div class="form-group">
+                          <label>Cijena</label>
+                          <input type="text" class="form-control" id="edit-cijena" placeholder="Example: 30">
+                      </div>
+                      <div class="form-group">
+                          <label>Kolicina proizvoda</label>
+                          <input type="text" class="form-control" id="edit-kolicina" placeholder="Example: 1">
+                      </div>
+                      <div class="mb-3">
+                          <label for="exampleFormControlTextarea1" class="form-label">Opis artikla</label>
+                          <textarea class="form-control" rows="3" id="edit-opisartikla"></textarea>
+                      </div>
+                      <div class="interesi">
+                          <h4>Kategorije</h4>
+                          <%kategorije.forEach(kategorija=> { %>
+                          <div onclick="klikninadiv(<%=kategorija.id%>)" class="interes" id="<%=kategorija.id%>edit">
+                              <%=kategorija.naziv%>
+                          </div>
+                          <%})%>
+                      </div>
+                  </div>
+                  <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                      <button type="button" class="btn btn-primary" onclick="EditArtikal()">Save changes</button>
+                  </div>
+              </div>
+          </div>
+      </div>
+
+
+    <!--------------------------------------     EDIT PROFILE TRGOVAC --------------------------------------------------------->
+
+      <div class="modal fade" id="editprofile" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+              <div class="modal-content">
+                  <div class="modal-header">
+                      <h5 class="modal-title" id="exampleModalLongTitle">Edit Profile</h5>
+                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                      </button>
+                  </div>
+                  <div class="modal-body">
+                      <div class="ime_i_prezime">
+                          <div class="form-group">
+                              <p>NAME</p>
+                              <input id="trgovac-ime" type="text" name="name" value="<%=trgovac.ime%>" placeholder="Enter your name..." />
+                          </div>
+                          <div class="form-group">
+                              <p>SURNAME</p>
+                              <input id="trgovac-prezime" type="text" name="surname" value="<%=trgovac.prezime%>" placeholder="Enter your surname..."/>
+                          </div>
+                      </div>
+                      <div class="ime_i_prezime">
+                          <div class="form-group">
+                              <p>EMAIL</p>
+                              <input id="trgovac-email" type="email" name="email" value="<%=trgovac.email%>" placeholder="Enter your email..." />
+                          </div>
+                          <div class="form-group">
+                              <p>ADRESS</p>
+                              <input id="trgovac-adresa" type="text" name="adresa" value="<%=trgovac.adresa%>" placeholder="Enter your adress..." />
+                          </div>
+                      </div>
+
+                      <div class="ime_i_prezime">
+                          <div class="form-group">
+                              <p>CITY</p>
+                              <input id="trgovac-grad" type="text" name="email" value="<%=trgovac.grad%>" placeholder="Enter your City" />
+                          </div>
+                          <div class="form-group">
+                              <p>COUNTRY</p>
+                              <input id="trgovac-drzava" type="text" name="adresa" value="<%=trgovac.drzava%>" placeholder="Enter your country" />
+                          </div>
+                      </div>
+
+                      <div class="ime_i_prezime">
+                          <div class="form-group">
+                              <p>COMPANY NAME</p>
+                              <input id="trgovac-firma-naziv" type="text" name="naziv-firme" value="<%=trgovac.naziv%>" placeholder="Enter your email..." />
+                          </div>
+                          <div class="form-group">
+                              <p>COMPANY CONTACT</p>
+                              <input id="trgovac-firma_tel" type="text" name="firma_tel" value="<%=trgovac.kontakt_tel%>" placeholder="Enter your adress..." />
+                          </div>
+                      </div>
+                      <div class="form-group">
+                          <p>ADD PHOTO</p>
+                          <input type="file" id="trgovac_avatar" name="avatar" accept="image/png, image/jpeg" />
+                      </div>
+                      <div class="form-group">
+                          <p>PASSWORD</p>
+                          <input id="trgovac-password" type="password" name="password" value="" placeholder="Enter your password..."/>
+                          <div><small class="hint">U have to enter your password to make any changes</small></div>
+                      </div>
+                  </div>
+                  <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                      <button type="button" class="btn btn-primary" onclick="updateProfile()">Save changes</button>
+                  </div>
+              </div>
+          </div>
+      </div>
+
+      <div class="modal fade" id="passwordchange" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered" role="document">
+              <div class="modal-content">
+                  <div class="modal-header">
+                      <h5 class="modal-title" id="exampleModalLongTitle">Edit Profile</h5>
+                      <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                          <span aria-hidden="true">&times;</span>
+                      </button>
+                  </div>
+                  <div class="modal-body">
+                      <div class="form-group">
+                          <p>CURRENT PASSWORD</p>
+                          <input id="current-password" type="text" name="name" value="" placeholder="current password" />
+                      </div>
+                      <div class="form-group">
+                          <p>NEW PASSWORD</p>
+                          <input id="new-password" type="text" name="name" value="" placeholder="new password" />
+                      </div>
+                      <div class="form-group">
+                          <p>CONFIRM NEW PASSWORD</p>
+                          <input id="confirmnew-password" type="text" name="name" value="" placeholder="new password" />
+                          <small id="greska"></small>
+                      </div>
+                  </div>
+                  <div class="modal-footer">
+                      <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                      <button type="button" class="btn btn-primary" onclick="changePassword()">Save changes</button>
+                  </div>
+              </div>
+          </div>
+      </div>
+
+
+
+</body>
+</html>

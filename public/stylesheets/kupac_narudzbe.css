@@ -1,0 +1,71 @@
+body{
+    min-height: 100vh;
+}
+
+.header{
+    display: flex;
+    justify-content: center;
+    height: 100px;
+    background-image: linear-gradient(to right, #1D1234, #610E80);
+}
+.header nav{
+    display: flex;
+    width: 8%;
+    height: 50px;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    margin: auto 10px auto 10px;
+}
+.header nav a{
+    text-decoration: none;
+    color: white;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 800;
+}
+
+.main-content{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 5%;
+}
+.naslov_narudzbi{
+    display: grid;
+    grid-template-columns: 5% 20% 20% 20% 20% 15%;
+    width: 75%;
+    justify-items: center;
+    margin-bottom: 2%;
+}
+.narudzbe{
+    display: grid;
+    grid-template-columns: 5% 20% 20% 20% 20% 15%;
+    min-height: 50px;
+    width: 75%;
+    justify-items: center;
+    align-items: center;
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
+}
+.narudzbe p{
+    font-size: 20px;
+    margin: 0;
+}
+.narudzbe span{
+    font-weight: bold;
+}
+.artikli{
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+}
+.artikli div{
+    font-weight: bold;
+    display: grid;
+    height: 50px;
+    grid-template-columns: 20% 20% 20%;
+    justify-items: center;
+    align-items: center;
+}
+.hide{
+    display: none;
+}

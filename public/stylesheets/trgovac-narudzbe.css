@@ -1,0 +1,78 @@
+body{
+    min-height: 100vh;
+}
+
+.nazadnapocetnu {
+    display: flex;
+    align-items: center;
+    height: 100px;
+    margin-left: 15%;
+}
+
+.nazadnapocetnu button{
+    margin-right: 10px;
+    outline: none;
+    background-color: #610E80;
+    border-radius: 4px;
+    padding: 5px 10px;
+    border: 1px solid;
+    border-color: #610E80;
+    color: white;
+}
+.nazadnapocetnu button:hover{
+    background-color: #FE7F54;
+    border-color: #FE7F54;
+    cursor: pointer;
+}
+.nazadnapocetnu button a{
+    text-decoration: none;
+    color: white;
+}
+
+.main-content{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+.naslov_narudzbi{
+    display: grid;
+    grid-template-columns: 5% 10% 10% 10% 10% 20% 15% 20%;
+    width: 75%;
+    justify-items: center;
+    margin-bottom: 2%;
+}
+.naslov_narudzbi p{
+    margin: 0;
+}
+.narudzbe{
+    display: grid;
+    grid-template-columns: 5% 10% 10% 10% 10% 20% 15% 20%;
+    min-height: 50px;
+    width: 75%;
+    justify-items: center;
+    align-items: center;
+    box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
+}
+.narudzbe p{
+    font-size: 20px;
+    margin: 0;
+}
+.narudzbe span{
+    font-weight: bold;
+}
+.artikli{
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+}
+.artikli div{
+    font-weight: bold;
+    display: grid;
+    height: 50px;
+    grid-template-columns: 20% 20% 20%;
+    justify-items: center;
+    align-items: center;
+}
+.hide{
+    display: none;
+}

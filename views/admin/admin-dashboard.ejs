@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel='stylesheet' href='/stylesheets/admin-dashboard.css' />
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@3.7.0/dist/chart.min.js"></script>
+    <script>
+        function signout(){
+            $.ajax({
+                url:"/admin/signout/",
+                data:{},
+                type:'POST',
+                beforeSend: function (){}
+            }).done(function (){
+                alert("Dovidjenja");
+                window.location.href = "/login";
+            })
+        }
+
+    </script>
+</head>
+<body>
+        <div class="header">
+            <nav><a href="/admin/">Dashboard</a></nav>
+            <nav><a href="/admin/users">Useri</a></nav>
+            <nav><a href="/admin/kategorije">Kategorije</a></nav>
+            <nav><a onclick="signout()"> Sign out</a></nav>
+        </div>
+
+        <div class="container">
+            <canvas id="kupci_trgovci"></canvas>
+            <canvas id="broj_transakcija"></canvas>
+        </div>
+        <script>
+            const ctx = document.getElementById('kupci_trgovci').getContext('2d');
+            const myChart = new Chart(ctx, {
+                type: 'pie',
+                data: {
+                    labels: ['broj_kupaca','broj_trgovaca'],
+                    datasets: [{
+                        data: [<%-kupci.length%>, <%-trgovci.length%>],
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.2)',
+                            'rgba(54, 162, 235, 0.2)'
+                        ],
+                        borderColor: [
+                            'rgba(255, 99, 132, 1)',
+                            'rgba(54, 162, 235, 1)'
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    responsive: false
+                }
+            });
+        </script>
+
+</body>
+</html>

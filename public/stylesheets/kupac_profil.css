@@ -1,0 +1,133 @@
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap');
+
+body{
+    margin: 0;
+    padding: 0;
+}
+
+.kupac-mainpage{
+    height: 100vh;
+    width: 100%;
+
+}
+
+.header{
+    display: flex;
+    justify-content: center;
+    height: 100px;
+    background-image: linear-gradient(to right, #1D1234, #610E80);
+}
+.header nav{
+    display: flex;
+    width: 8%;
+    height: 50px;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    margin: auto 10px auto 10px;
+}
+.header nav a{
+    text-decoration: none;
+    color: white;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 800;
+}
+
+.cover-photo{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 50%;
+    width: 100%;
+    background-image: url("../images/background_image2.png");
+    background-repeat: no-repeat;
+    background-size: cover;
+}
+.okupcu{
+    background-color: white;
+    height: 70%;
+    width: 70%;
+    border-radius: 12px;
+}
+.edit-profile h3{
+    display: inline-block;
+    width: 70px;
+    margin-left: 50px;
+    margin-top: 30px;
+    margin-right: 10px;
+    font-family: 'Montserrat', 'sans-serif';
+    font-weight: 600;
+}
+.edit-profile span{
+    font-size: 10px;
+    border-bottom: 0.5px solid black;
+}
+.okupcu-details{
+    display: flex;
+    width: 100%;
+    border-radius: 10px;
+
+}
+.okupcu-details img{
+    margin-left: 50px;
+    border-radius: 10px;
+    border: 1px solid;
+    border-color: #B4B4B4;
+}
+.kupac-podaci{
+    width: 70%;
+}
+.kupac-podaci h2{
+    font-family: 'Montserrat', 'sans-serif';
+    font-weight: 800;
+    margin-left: 20px;
+}
+.podaciusera{
+    font-family: 'Montserrat', 'sans-serif';
+    font-weight: 400;
+    width: 100%;
+    display: flex;
+    font-size: 13px;
+}
+.podaciusera span{
+    width: 200px;
+    height: 30px;
+    margin-left: 20px;
+}
+.buttons{
+    margin-left: 20px;
+    width: 100%;
+    font-family: 'Montserrat', 'sans-serif';
+    font-weight: 400;
+}
+.buttons button{
+    margin-top: 5px;
+    margin-right: 10px;
+    outline: none;
+    background-color: #610E80;
+    border-radius: 4px;
+    padding: 5px 10px;
+    border: 1px solid;
+    border-color: #610E80;
+    color: white;
+}
+
+.buttons button:hover{
+    background-color: #FE7F54;
+    border-color: #FE7F54;
+    cursor: pointer;
+}
+.buttons button a{
+    text-decoration: none;
+    color: white;
+}
+
+
+.ime_i_prezime{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+}
+.hint{
+    font-weight: bold;
+}

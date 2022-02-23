@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel='stylesheet' href='/stylesheets/checkout.css' />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    <script>
+
+        function posaljiNarudzbu() {
+
+            $.ajax({
+                url: "/kupac/kreirajnarudzbu",
+                data: {},
+                type: 'POST',
+                beforeSend: function () {
+                }
+            }).done(function (data) {
+                alert("Narudzba uspjesno poslata!");
+                window.location.href = "/kupac/";
+            })
+
+        }
+
+
+    </script>
+
+
+    <!-- STao kod implementacije checkouta i brisanja iz cookija cart-a pri zavrsenom checkout-u -->
+</head>
+<body>
+    <div class="checkout">
+        <div class="checkout_header">
+            <span>Slika</span>
+            <span>Naziv</span>
+            <span>Kolicina</span>
+            <span>Cijena</span>
+
+        </div>
+        <%for(i = 0; i < korpa.length - 1; i++) {%>
+        <div class="checkout_products">
+            <img src="<%=korpa[i].photo%>" width="150px" height="100px" />
+            <span><%=korpa[i].artikal_naziv%></span>
+            <span><%=korpa[i].kolicina%></span>
+            <span><%=korpa[i].cijena_artikla%></span>
+        </div>
+        <%}%>
+
+
+        <div class="checkout_footer">
+            <button onclick="posaljiNarudzbu()">Naruci</button>
+            <div>
+                <span>Ukupno: <%=korpa[korpa.length-1]%> KM</span>
+            </div>
+
+        </div>
+
+    </div>
+</body>
+</html>

@@ -1,0 +1,253 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel='stylesheet' href='/stylesheets/kupac_profil.css' />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+        function signout(){
+            $.ajax({
+                url: "/kupac/signout",
+                data:{},
+                type:'GET',
+                beforeSend: function(){}
+            }).done(function(data){
+                alert("Dovidjenja");
+                window.location.href = "/login";
+            })
+        }
+
+        // edit profila kupca izvuci podatke i sendati na api
+        function updateProfile(){
+            let ime = document.getElementById('kupac-name').value;
+            let prezime = document.getElementById('kupac-surname').value;
+            let email = document.getElementById('kupac-email').value;
+            let adresa = document.getElementById('kupac-adresa').value;
+            let password = document.getElementById('kupac-password').value;
+            let slikakupca = document.getElementById("kupac_avatar").files;
+            let kupac_avatar = new FormData();
+
+            kupac_avatar.append("kupac_avatar",slikakupca[0]);
+
+            let obj = {
+                ime:ime,
+                prezime: prezime,
+                email: email,
+                adresa: adresa,
+                password: password
+            };
+
+
+            $.ajax({
+                url: "/kupac/editupload/kupacslika",
+                cache:false,
+                type: 'POST',
+                contentType: false,
+                processData: false,
+                data: kupac_avatar,
+                beforeSend: function (){},
+                error: function (){
+                    $.ajax({
+                        url: "/kupac/editprofile",
+                        data:JSON.stringify(obj),
+                        type:'POST',
+                        contentType: 'application/json',
+                        error: function (error){
+                            console.log(error);
+                        },
+                        beforeSend: function(){},
+                    }).done(function(data){
+                        alert("uspjesan update profila");
+                        setTimeout(() => {
+                            location.reload()
+                        },3000);
+                    })
+                }
+            })
+            .done(function (){
+                $.ajax({
+                    url: "/kupac/editprofile",
+                    data:JSON.stringify(obj),
+                    type:'POST',
+                    contentType: 'application/json',
+                    error: function (error){
+                        console.log(error);
+                    },
+                    beforeSend: function(){},
+                }).done(function(data){
+                    alert("uspjesan update profila");
+                    setTimeout(() => {
+                        location.reload()
+                    },3000);
+                })
+            })
+
+        }
+
+        function changePassword(){
+            let currentpassword = document.getElementById('current-password').value
+            let newpassword = document.getElementById('new-password').value;
+            let confirmnewpassword = document.getElementById('confirmnew-password').value;
+
+            if(newpassword !== confirmnewpassword)
+                {
+                    document.getElementById("greska").innerHTML = "Pogresno ste unijeli novu sifru";
+                }
+            else{
+                document.getElementById("greska").innerHTML = '';
+                 $.ajax({
+                    url: "/kupac/changepassword/" + currentpassword +"/" + newpassword,
+                    data:{},
+                    type:'POST',
+                    error: function (error){
+                        console.log(error);
+                    },
+                    beforeSend: function(){},
+                }).done(function(data){
+                     $.ajax({
+                         url: "/kupac/signout",
+                         data:{},
+                         type:'GET',
+                         beforeSend: function(){}
+                     }).done(function(data){
+                         alert("Uspjesno promjenjena sifra, molimo logujte se ponovo");
+                         window.location.href = "/login";
+                     })
+                })
+            }
+        }
+
+    </script>
+
+
+
+
+</head>
+
+<body>
+    <header class="header">
+        <nav><a href="/kupac">Pocetna</a></nav>
+        <nav><a href="/kupac/artikli">Artikli </a></nav>
+        <nav><a href="/kupac/trgovci">Trgovci </a></nav>
+        <nav><a href="/kupac/profil/<%=kupac.id%>"><%=kupac.ime%> <%=kupac.prezime%></a></nav>
+    </header>
+
+    <div class="kupac-mainpage">
+        <div class="cover-photo">
+
+            <div class="okupcu">
+                <div class="edit-profile">
+                    <h3>Profil</h3>
+                    <span onclick="signout()">Sign out</span>
+                </div>
+                <div class="okupcu-details">
+                    <img src="/uploads/<%=kupac.photo%>" height="150px" width="200px" />
+                    <div class="kupac-podaci">
+                        <h2><%=kupac.ime%> <%=kupac.prezime%></h2>
+                        <div class="podaciusera">
+                            <span><%=kupac.adresa%></span>
+                        </div>
+                        <div class="podaciusera">
+                            <span><%=kupac.email%></span>
+                        </div>
+                        <div class="buttons">
+                            <button><a href="/kupac/narudzbe">Narudzbe</a></button>
+                            <button>Poruke</button>
+                            <button data-toggle="modal" data-target="#exampleModalCenter">Edit Profile</button>
+                            <button data-toggle="modal" data-target="#passwordchange"onclick="changePassword()">Change your password</button>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+
+
+        </div>
+    </div>
+    <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Edit Profile</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="ime_i_prezime">
+                        <div class="form-group">
+                            <p>NAME</p>
+                            <input id="kupac-name" type="text" name="name" value="<%=kupac.ime%>" placeholder="Enter your name..." />
+                        </div>
+                        <div class="form-group">
+                            <p>SURNAME</p>
+                            <input id="kupac-surname" type="text" name="surname" value="<%=kupac.prezime%>" placeholder="Enter your surname..."/>
+                        </div>
+                    </div>
+                    <div class="ime_i_prezime">
+                        <div class="form-group">
+                            <p>EMAIL</p>
+                            <input id="kupac-email" type="email" name="email" value="<%=kupac.email%>" placeholder="Enter your email..." />
+                        </div>
+                        <div class="form-group">
+                            <p>ADRESS</p>
+                            <input id="kupac-adresa" type="text" name="adresa" value="<%=kupac.adresa%>" placeholder="Enter your adress..." />
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <p>PASSWORD</p>
+                        <input id="kupac-password" type="password" name="password" value="" placeholder="Enter your password..."/>
+                        <div><small class="hint">U have to enter your password to make any changes</small></div>
+                    </div>
+                    <div class="form-group">
+                        <p>ADD PHOTO</p>
+                        <input type="file" id="kupac_avatar" name="avatar" accept="image/png, image/jpeg" />
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="updateProfile()">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal fade" id="passwordchange" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Edit Profile</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                        <div class="form-group">
+                            <p>CURRENT PASSWORD</p>
+                            <input id="current-password" type="text" name="name" value="" placeholder="current password" />
+                        </div>
+                    <div class="form-group">
+                        <p>NEW PASSWORD</p>
+                        <input id="new-password" type="text" name="name" value="" placeholder="new password" />
+                    </div>
+                    <div class="form-group">
+                        <p>CONFIRM NEW PASSWORD</p>
+                        <input id="confirmnew-password" type="text" name="name" value="" placeholder="new password" />
+                        <small id="greska"></small>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="changePassword()">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</body>
+</html>

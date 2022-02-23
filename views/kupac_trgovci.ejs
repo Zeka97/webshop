@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel='stylesheet' href='/stylesheets/kupac_trgovci.css' />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+
+
+        //srediti komentare dodati na artikle
+
+
+        var datum = true;
+        var cijena = true;
+        var korpa = [];
+
+
+        function posjetiTrgovca(){
+            let trgovac_id = document.getElementById('trgovac_id').innerHTML;
+            window.location.href = "/kupac/trgovina/" + trgovac_id;
+        }
+
+
+        function OrderBy(key){
+            let string;
+            if(key == "datum"){
+                if(datum){
+                    string = key +"_objave" + " ASC";
+                    datum = !datum;
+                }
+                else{
+                    string = key + "_objave" +  " DESC";
+                    datum = !datum;
+                }
+            }
+            else if(key == "cijena"){
+                if(cijena){
+                    string = key + " ASC";
+                    cijena = !cijena;
+                }
+                else{
+                    string = key + " DESC";
+                    cijena = !cijena;
+                }
+            }
+            $.ajax({
+                url: "/kupac/artikli/" + string,
+                data:{},
+                type:'GET',
+                contentType:'application/json',
+                beforeSend: function(){}
+            }).done(function(){
+                window.location.href = "/kupac/artikli/" + string;
+            })
+
+
+
+        }
+
+        function search() {
+
+            let string = document.getElementById("searchbar").value;
+
+            if (string == '') {
+                window.location.href = "/kupac/artikli";
+            } else {
+                window.location.href ="/kupac/artikli/search/" + string;
+            }
+        }
+        function signout(){
+            $.ajax({
+                url: "/kupac/signout",
+                data:{},
+                type:'GET',
+                beforeSend: function(){}
+            }).done(function(data){
+                window.location.href = "/login";
+            })
+
+
+        }
+
+        function openModal(obj){
+            console.log(obj);
+            let datum_objave = new Date(obj.artikal_datum_objave);
+            console.log(datum_objave);
+            console.log(datum_objave.getDate() + '/' + (datum_objave.getMonth()+1) + '/' + datum_objave.getFullYear() + " " + datum_objave.getHours() + ":" + datum_objave.getMinutes())
+            document.getElementById('trgovac_id').innerHTML = obj.id_trgovca;
+            document.getElementById('exampleModalLongTitle').innerHTML = obj.artikal_id;
+            document.getElementById('imgsrc').src = "../../uploads/" + obj.artikal_photo;
+            document.getElementById('naziv_artikla').innerHTML = obj.artikal_naziv;
+            document.getElementById('cijena_artikla').innerHTML = obj.artikal_cijena + " KM";
+            document.getElementById('naziv_trgovine').innerHTML = obj.trgovina_naziv;
+            document.getElementById('broj_telefona').innerHTML = obj.trgovina_telefon;
+            document.getElementById('trgovina_grad').innerHTML = obj.trgovina_grad;
+            document.getElementById('trgovina_adresa').innerHTML = obj.trgovina_adresa;
+            document.getElementById('datum_objave').innerHTML = datum_objave.getDate() + '/' + (datum_objave.getMonth()+1) + '/' + datum_objave.getFullYear() + " " + datum_objave.getHours() + ":" + datum_objave.getMinutes();
+            document.getElementById('opis_proizvoda').innerHTML = obj.artikal_opis;
+            document.getElementById('artikal_kolicina').innerHTML = obj.artikal_kolicina;
+        }
+
+
+
+        var showCart = false;
+        function openCart(){
+            showCart = !showCart;
+            if(showCart) {
+                $('#dropdown-cart').removeClass("hide");
+                $('#dropdown-cart').addClass("show_dropdown");
+            }
+
+            else{
+                $('#dropdown-cart').removeClass("show_dropdown");
+                $('#dropdown-cart').addClass("hide");
+            }
+            console.log(korpa);
+        }
+
+
+
+    </script>
+</head>
+<body>
+
+<header class="header">
+    <nav><a href="/kupac">Pocetna</a></nav>
+    <nav><a href="/kupac/artikli">Artikli </a></nav>
+    <nav><a href="/kupac/trgovci">Trgovci </a></nav>
+    <nav><a href="/kupac/profil/<%=kupac.id%>"><%=kupac.ime%> <%=kupac.prezime%></a></nav>
+</header>
+
+<div class="searchdiv">
+
+    <input id="searchbar" type="text" name="proizvoda" value="" placeholder="Naziv proizvoa"/>
+    <select name="cars" id="cars" class="kategorije">
+        <option value="default" selected disabled>kategorija</option>
+        <option value="volvo">Volvo</option>
+        <option value="saab">Saab</option>
+        <option value="mercedes">Mercedes</option>
+        <option value="audi">Audi</option>
+    </select>
+    <button class="searchbtn" onclick="search()">Search</button>
+
+</div>
+
+
+<div class="artikli" id="artikli">
+    <%trgovci.forEach(trgovac => { %>
+    <div class="artikal" id="<%=trgovac.idt%>" onclick="window.location.href='/kupac/trgovina/<%=trgovac.idt%>'">
+        <div class="slika">
+            <img src="/uploads/<%=trgovac.photo%>" alt="slika-proizvoda" height="100%" width="100%"/>
+        </div>
+        <div class="opis">
+            <h2><%=trgovac.ime%></h2>
+            <p><%=trgovac.prezime%></p>
+            <p><%=trgovac.naziv%></p>
+        </div>
+    </div>
+    <%})%>
+</div>

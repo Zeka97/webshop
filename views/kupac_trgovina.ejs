@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel='stylesheet' href='/stylesheets/kupac-trgovina.css' />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+
+        //dodati izgled profila trgovca koji je posjecen i artikle koje ima, ispraviti search i ostalo //
+
+
+        var datum = true;
+        var cijena = true;
+        var korpa = [];
+
+        function OrderBy(key){
+            let string;
+            if(key == "datum"){
+                if(datum){
+                    string = key +"_objave" + " ASC";
+                    datum = !datum;
+                }
+                else{
+                    string = key + "_objave" +  " DESC";
+                    datum = !datum;
+                }
+            }
+            else if(key == "cijena"){
+                if(cijena){
+                    string = key + " ASC";
+                    cijena = !cijena;
+                }
+                else{
+                    string = key + " DESC";
+                    cijena = !cijena;
+                }
+            }
+            $.ajax({
+                url: "/kupac/trgovina/" +<%-artikli[0].trgovac_id%>  + string,
+                data:{},
+                type:'GET',
+                contentType:'application/json',
+                beforeSend: function(){}
+            }).done(function(){
+                window.location.href = "/kupac/trgovina/" + <%-artikli[0].trgovac_id%> + string;
+            })
+
+
+
+        }
+
+        function search() {
+
+            let string = document.getElementById("searchbar").value;
+
+            if (string == '') {
+                window.location.href = "/kupac/trgovina/";
+            } else {
+                window.location.href ="/kupac/trgovina/search/" + string;
+            }
+        }
+        function signout(){
+            $.ajax({
+                url: "/kupac/signout",
+                data:{},
+                type:'GET',
+                beforeSend: function(){}
+            }).done(function(data){
+                window.location.href = "/login";
+            })
+
+
+        }
+
+        function openModal(obj){
+            console.log(obj);
+            let datum_objave = new Date(obj.artikal_datum_objave);
+            console.log(datum_objave);
+            console.log(datum_objave.getDate() + '/' + (datum_objave.getMonth()+1) + '/' + datum_objave.getFullYear() + " " + datum_objave.getHours() + ":" + datum_objave.getMinutes())
+            document.getElementById('trgovac_id').innerHTML = obj.id_trgovca;
+            document.getElementById('exampleModalLongTitle').innerHTML = obj.artikal_id;
+            document.getElementById('imgsrc').src = "../../uploads/" + obj.artikal_photo;
+            document.getElementById('naziv_artikla').innerHTML = obj.artikal_naziv;
+            document.getElementById('cijena_artikla').innerHTML = obj.artikal_cijena + " KM";
+            document.getElementById('naziv_trgovine').innerHTML = obj.trgovina_naziv;
+            document.getElementById('broj_telefona').innerHTML = obj.trgovina_telefon;
+            document.getElementById('trgovina_grad').innerHTML = obj.trgovina_grad;
+            document.getElementById('trgovina_adresa').innerHTML = obj.trgovina_adresa;
+            document.getElementById('datum_objave').innerHTML = datum_objave.getDate() + '/' + (datum_objave.getMonth()+1) + '/' + datum_objave.getFullYear() + " " + datum_objave.getHours() + ":" + datum_objave.getMinutes();
+            document.getElementById('opis_proizvoda').innerHTML = obj.artikal_opis;
+            document.getElementById('artikal_kolicina').innerHTML = obj.artikal_kolicina;
+        }
+
+        function  povecajVrijednost(){
+            if(document.getElementById('izabrana_kolicina').innerHTML != document.getElementById('artikal_kolicina').innerHTML){
+                document.getElementById('izabrana_kolicina').innerHTML = parseInt(document.getElementById('izabrana_kolicina').innerHTML) + 1;
+            }
+        }
+
+        function smanjiVrijednost(){
+            if(document.getElementById('izabrana_kolicina').innerHTML != 1){
+                document.getElementById('izabrana_kolicina').innerHTML = parseInt(document.getElementById('izabrana_kolicina').innerHTML) - 1;
+            }
+        }
+        function dodajUKorpu(){
+
+            let id = document.getElementById('exampleModalLongTitle').innerHTML;
+            let photo = document.getElementById('imgsrc').src;
+            let artikal_naziv = document.getElementById('naziv_artikla').innerHTML;
+            let cijena_artikla = document.getElementById('cijena_artikla').innerHTML;
+            let naziv_trgovine = document.getElementById('naziv_trgovine').innerHTML;
+            let broj_telefona = document.getElementById('broj_telefona').innerHTML;
+            let trgovina_grad = document.getElementById('trgovina_grad').innerHTML;
+            let trgovina_adresa = document.getElementById('trgovina_adresa').innerHTML;
+            let datum_objave = document.getElementById('datum_objave').innerHTML;
+            let opis_proizvoda = document.getElementById('opis_proizvoda').innerHTML;
+            let kolicina = document.getElementById('izabrana_kolicina').innerHTML;
+            let trgovac_id = document.getElementById("trgovac_id").innerHTML;
+
+            document.getElementById('izabrana_kolicina').innerHTML = 1;     // zbog bug-a prelaska kod sljedeceg artikla prelaska i mogucnost prelaska ukupne kolicine artikala
+
+
+            var obj = {
+                id: id,
+                photo: photo,
+                artikal_naziv: artikal_naziv,
+                cijena_artikla: cijena_artikla,
+                naziv_trgovine: naziv_trgovine,
+                broj_telefona: broj_telefona,
+                trgovina_grad: trgovina_grad,
+                trgovina_adresa: trgovina_adresa,
+                datum_objave: datum_objave,
+                opis_proizvoda: opis_proizvoda,
+                kolicina: kolicina,
+                trgovac_id: trgovac_id
+            }
+            let postoji_u_nizu = false;
+            for(let i = 0; i < korpa.length; i++){
+                if(korpa[i].id == obj.id){
+                    postoji_u_nizu = true;
+                    console.log(postoji_u_nizu);
+                    break;
+                }
+            }
+
+            if(!postoji_u_nizu){
+                korpa.push(obj);
+                document.getElementById('broj_artikala_u_korpi').innerHTML = parseInt(document.getElementById('broj_artikala_u_korpi').innerHTML) + 1;
+
+                let html = '';
+                html+= '<div class="cart-box">';
+                html+= '<img src="' + obj.photo + '"';
+                html+= '<span>' + obj.artikal_naziv + '</span>';
+                html+= '<span>' + obj.kolicina + '</span>';
+                html+= '<span>' + obj.cijena_artikla + '</span>';
+                html +='</div>';
+                $('#dropdown-cart').prepend(html)
+                console.log(html);
+
+                $('#cart-buttons').removeClass("hide");
+                $('#cart-buttons').addClass("buttons");
+            }
+        }
+
+
+
+        var showCart = false;
+        function openCart(){
+            showCart = !showCart;
+            if(showCart) {
+                $('#dropdown-cart').removeClass("hide");
+                $('#dropdown-cart').addClass("show_dropdown");
+            }
+
+            else{
+                $('#dropdown-cart').removeClass("show_dropdown");
+                $('#dropdown-cart').addClass("hide");
+            }
+            console.log(korpa);
+        }
+
+        function clearCart(){
+            $("div").remove(".cart-box");
+            document.getElementById('broj_artikala_u_korpi').innerHTML = 0;
+
+            korpa = [];
+            $('#cart-buttons').addClass("hide");
+            $('#cart-buttons').removeClass("buttons");
+        }
+
+        function goToCheckout(){
+            let ukupnaCijena = 0;
+            for(i = 0; i < korpa.length; i++){
+                ukupnaCijena+= parseInt(korpa[i].cijena_artikla) * parseInt(korpa[i].kolicina);
+            }
+            korpa.push(ukupnaCijena);
+
+
+            $.ajax({
+                url: "/kupac/checkout/",
+                data:{korpa: JSON.stringify(korpa)},
+                type:'POST',
+                beforeSend: function(){}
+            }).done(function(data){
+                window.location.href = "/kupac/checkout";
+            })
+        }
+
+
+
+    </script>
+</head>
+<body>
+
+<header class="header">
+    <nav><a href="/kupac">Pocetna</a></nav>
+    <nav><a href="/kupac/artikli">Artikli </a></nav>
+    <nav><a href="/kupac/trgovci">Trgovci </a></nav>
+    <nav><a href="/kupac/profil/<%=kupac.id%>"><%=kupac.ime%> <%=kupac.prezime%></a></nav>
+    <div class="cart">
+        <div class="cart-button" onclick="openCart()">
+            <img src="/images/cart.svg" height="30px" width="30px"/>
+            <span id="broj_artikala_u_korpi">0</span>
+        </div>
+        <div id="dropdown-cart" class="hide">
+            <div id="cart-buttons" class="hide">
+                <button onclick="clearCart()">Clear</button>
+                <%if(kupac.arhivstatus !== true){%>
+                    <button onclick="goToCheckout()">Go to Checkout</button>
+                <%}%>
+            </div>
+        </div>
+    </div>
+</header>
+
+<!-- t.naziv as trgovina_naziv, t.kontakt_tel as trgovina_telefon,t.sjediste_adresa as trgovina_adresa, t.grad as trgovina_grad,t.logo as trgovina_photo, t2.id as id_trgovca -->
+<div class="cover-photo">
+    <div class="otrgovcu">
+        <div class="edit-profile">
+            <h3>Trgovac</h3>
+        </div>
+        <div class="otrgovcu-details">
+            <img src="/uploads/<%=artikli[0].trgovac_photo%>" height="150px" width="200px" />
+            <div class="trgovac-podaci">
+                <h2><%=artikli[0].trgovac_ime%> <%=artikli[0].trgovac_prezime%></h2>
+                <div class="podaciusera">
+                    <span><%=artikli[0].trgovac_adresa%></span>
+                    <span><%=artikli[0].trgovina_telefon%></span>
+                </div>
+                <div class="podaciusera">
+                    <span><%=artikli[0].trgovac_email%></span>
+                    <span>Bosna i Hercegovina</span>
+                </div>
+             </div>
+
+        </div>
+
+
+    </div>
+</div>
+
+
+
+
+<div class="searchdiv">
+
+    <input id="searchbar" type="text" name="proizvoda" value="" placeholder="Naziv proizvoa"/>
+    <select name="cars" id="cars" class="kategorije">
+        <option value="default" selected disabled>kategorija</option>
+        <option value="volvo">Volvo</option>
+        <option value="saab">Saab</option>
+        <option value="mercedes">Mercedes</option>
+        <option value="audi">Audi</option>
+    </select>
+    <select name="stanje" id="stanje" class="stanje">
+        <option value="stanje" selected disabled>Stanje</option>
+        <option value="sve">sve</option>
+        <option value="novo">Novo</option>
+        <option value="polovno">Polovno</option>
+    </select>
+    <button class="searchbtn" onclick="search()">Search</button>
+
+</div>
+<div class="sortby">
+    <button id="datum" value="datum" onclick="OrderBy(document.getElementById('datum').value)">sort by Datum</button>
+    <button id="cijena" value="cijena" onclick="OrderBy(document.getElementById('cijena').value)">sort by Cijena</button>
+</div>
+
+
+<div class="artikli" id="artikli">
+    <%artikli.forEach(artikal => { %>
+    <div class="artikal" id="<%=artikal.id%>" data-toggle="modal" data-target="#exampleModalCenter" onclick="openModal(<%=JSON.stringify(artikal)%>)">
+        <div class="slika">
+            <img src="../../../uploads/<%=artikal.artikal_photo%>" alt="slika-proizvoda" height="100%" width="100%"/>
+        </div>
+        <div class="opis">
+            <h2><%=artikal.artikal_naziv%></h2>
+            <p><%=artikal.artikal_opis%></p>
+            <p><%=artikal.artikal_cijena%> KM</p>
+            <p><%=artikal.artikal_datum_objave.toLocaleString("de-DE",{year: 'numeric', month: '2-digit', day: '2-digit'})%></p>
+        </div>
+    </div>
+    <%})%>
+</div>
+
+<div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalLongTitle" style="display: none"></h5>
+                <h5 id="trgovac_id" style="displa:none"></h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group header_artikla">
+                    <img class="modal-slika" id="imgsrc"/>
+                    <div class="o_artiklu">
+                        <h3 id="naziv_artikla"></h3>
+                        <h5 id="cijena_artikla"></h5>
+                        <p id="naziv_trgovine"></p>
+                        <div class="dodatne_kategorije">
+                            <div>
+                                <span>Stanje</span>
+                                <p id="artikal_stanje">Novo</p>        <!--  DODATI DINAMICKI STANJE U FUNKCIJI openModal  -->
+                            </div>
+                            <div>
+                                <span>Lokacija</span>
+                                <p id="trgovina_grad"></p>
+                            </div>
+                            <div>
+                                <span>Adresa</span>
+                                <p id="trgovina_adresa"></p>
+                            </div>
+                            <div>
+                                <span>Datum objave</span>
+                                <p id="datum_objave"></p>
+                            </div>
+                            <div>
+                                <span>Kontakt</span>
+                                <p id="broj_telefona"></p>
+                            </div>
+                            <div>
+                                <span>Kolicina</span>
+                                <p id="artikal_kolicina"></p>
+                            </div>
+
+
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group artikal_opis">
+                    <h3>Opis</h3>
+                    <p id="opis_proizvoda"></p>
+                </div>
+                <div class="kolicina_usera">
+                    <p>Izaberite kolicinu proizvoda</p>
+                    <div>
+                        <span onclick="smanjiVrijednost()"><</span>
+                        <p id="izabrana_kolicina">1</p>
+                        <span onclick="povecajVrijednost()">></span>
+                    </div>
+                    <%if(kupac.arhiv_status === true){%>
+                        <p class="arhiv_status">Vas profil je arhiviran(za ukidanje obratite se administratoru)</p>
+                    <%}%>
+                </div>
+
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                <%if(kupac.arhiv_status !== true){%>
+                    <button type="button" class="btn btn-primary" onclick="dodajUKorpu()">Dodaj u Korpu</button>
+                <%}%>
+            </div>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel='stylesheet' href='/stylesheets/login.css' />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+        function login(){
+            document.getElementById('form').addEventListener("click", function (event){
+                event.preventDefault();
+            });
+            var username = document.getElementById('username').value;
+            var password = document.getElementById('password').value;
+            document.getElementById('username').value = '';
+            document.getElementById('password').value = '';
+            console.log(username,password);
+
+            $.ajax({
+                url: "/login/" + username + "/" + password,
+                data:{},
+                type:'GET',
+                beforeSend: function(){},
+                error: function (err){
+                    document.getElementById('block-message').innerHTML = err.responseJSON.message;
+                }
+            }).done(function(){
+                document.getElementById('block-message').innerHTML = '';
+                location.reload();
+            })
+        };
+
+
+
+    </script>
+</head>
+<body>
+    <div class="container">
+        <div class="left-container">
+            <form id="form" class="form">
+                <div class="mainbox">
+                    <div class="sign-buttons">
+                        <span>Sign in</span>
+                    </div>
+                    <div class="login_form">
+                        <div class="email_container">
+                            <label>USERNAME</label>
+                            <input id="username" type="text" name="username" value="" placeholder="Enter your username" />
+                        </div>
+                        <div class="password_container">
+                            <label>PASSWORD</label>
+                            <input id="password" type="password" name="password" value="" />
+                        </div>
+
+                        <div class="rememberme-forgetpassword">
+                            <div>
+                                <input type="checkbox" name="rememberme" />
+                                <label>Remember me</label>
+                            </div>
+                            <div>
+                                <a href="#" class="forgetpassword">Forget your password?</a>
+                            </div>
+                        </div>
+                        <div class="signinandcreatebuttons">
+                            <button class="signinbutton" onclick="login()">SIGN IN</button>
+                            <a class="createbutton" href="/signup">Create Account</a>
+                        </div>
+                        <p id="block-message"></p>
+                    </div>
+                </div>
+            </form>
+            <h1>Copyrights 2021 @ Amel Zekovic</h1>
+        </div>
+        <div class="right-container">
+                <h1>ZShop</h1>
+                <p>Best marketplace in your town</p>
+        </div>
+    </div>
+</body>
+</html>

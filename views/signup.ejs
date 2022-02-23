@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel='stylesheet' href='/stylesheets/signup.css' />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    <script>
+
+        var niz = [];
+        var interesiID = [];
+        function klikninadiv(key){
+            //var elem = document.getElementById(key);
+            if(niz[key-1] == true) {
+                //elem.style.backgroundColor = "yellow";
+                $("#" + key).removeClass("kliknuto");
+                $("#" + key).addClass("interes");
+                niz[key-1] = false;
+            }
+            else{
+                $("#" + key).removeClass("interes");
+                $("#" + key).addClass("kliknuto");
+                niz[key-1] = true;
+                console.log(niz[key-1]);
+            }
+            console.log(niz);
+        }
+        function trgovacilikupac(){
+            $(".mainbox-kupac").addClass("hide");
+            $(".mainbox-trgovac").addClass("hide");
+            $(".trgovacilikupacbox").removeClass("hide");
+        }
+        function kupac(){
+            $(".trgovacilikupacbox").addClass("hide");
+            $(".mainbox-trgovac").addClass("hide");
+            $(".mainbox-kupac").removeClass("hide");
+        }
+        function trgovac(){
+            $(".mainbox-trgovac").removeClass("hide");
+            $(".trgovacilikupacbox").addClass("hide");
+            $(".mainbox-kupac").addClass("hide");
+        }
+
+        function kreirajkupca() {
+            document.getElementById("kupacsignup").addEventListener("click", function (event) {
+                event.preventDefault();
+            })
+
+            var ime = document.getElementById("kupac-name").value;
+            var prezime = document.getElementById("kupac-surname").value;
+            var username = document.getElementById("kupac-username").value;
+            var email = document.getElementById("kupac-email").value;
+            var password = document.getElementById("kupac-password").value;
+            var confirm = document.getElementById("kupac-confirm").value;
+            var adresa = document.getElementById("kupac-adresa").value;
+            var slika = document.getElementById("kupac_avatar").files;
+
+            let kupac_avatar = new FormData();
+
+            kupac_avatar.append("kupac_avatar", slika[0]);
+
+            for (let i = 0; i < niz.length; i++) {
+                if (niz[i] == true) {
+                    interesiID.push(i + 1);
+                }
+            }
+
+            if (ime === '' || prezime === '' || username === '' || email === '' || password === '') {
+
+            } else {
+                let obj = {
+                    ime: ime,
+                    prezime: prezime,
+                    username: username,
+                    email: email,
+                    adresa: adresa,
+                    password: password,
+                    interesi: interesiID
+                };
+
+
+                $.ajax({
+                    url: "/signup/upload/kupacslika",
+                    cache: false,
+                    type: 'POST',
+                    contentType: false,
+                    processData: false,
+                    data: kupac_avatar,
+                    beforeSend: function (){},
+                    error: function () {
+                        $.ajax({
+                            url: "/signup/kupac",
+                            data: JSON.stringify(obj),
+                            type: 'POST',
+                            contentType: 'application/json',
+                            beforeSend: function () {
+                            }
+                        }).done(function (data) {
+                            alert("Uspjesno ste kreirali racun");
+                            window.location.href = "/login";
+                        })
+                    }
+                }).done( function (){
+                    $.ajax({
+                        url: "/signup/kupac",
+                        data: JSON.stringify(obj),
+                        type: 'POST',
+                        contentType: 'application/json',
+                        beforeSend: function () {
+                        }
+                    }).done(function (data) {
+                        alert("Uspjesno ste kreirali racun");
+                        window.location.href = "/login";
+                    })
+                })
+            }
+        }
+
+        function kreirajtrgovca(){
+            var ime = document.getElementById("trgovac-name").value;
+            var prezime = document.getElementById("trgovac-surname").value;
+            var email = document.getElementById("trgovac-email").value;
+            var username = document.getElementById("trgovac-username").value;
+            var sifra = document.getElementById("trgovac-password").value;
+            var confirm = document.getElementById("trgovac-confirm").value;
+            var grad = document.getElementById("trgovac-grad").value;
+            var adresatrgovca = document.getElementById("trgovac-adresa").value;
+            var drzava = document.getElementById("trgovac-drzava").value;
+            var slikatrgovca = document.getElementById("trgovac_avatar").files;
+            var imekompanije = document.getElementById("trgovina-ime").value;
+            var brojkompanije = document.getElementById("trgovina-telefon").value;
+            var adresasjedista = document.getElementById("trgovina-adresa").value;
+            var logotrgovine = document.getElementById("trgovina_avatar").files;
+            let trgovac_avatar = new FormData();
+            let trgovina_avatar = new FormData();
+            var obj = {
+                ime: ime,
+                prezime: prezime,
+                email: email,
+                username: username,
+                sifra: sifra,
+                grad: grad,
+                adresatrgovca: adresatrgovca,
+                drzava: drzava,
+                imekompanije: imekompanije,
+                brojkompanije: brojkompanije,
+                adresasjedista: adresasjedista
+            };
+
+
+
+
+
+            trgovac_avatar.append("trgovac_avatar",slikatrgovca[0]);
+            trgovina_avatar.append("trgovina_avatar",logotrgovine[0]);
+
+            $.ajax({
+                url:"/signup/upload/trgovacslika/",
+                cache:false,
+                type: 'POST',
+                contentType: false,
+                processData: false,
+                data: trgovac_avatar,
+                beforeSend: function (){},
+                error: function (){
+                    $.ajax({
+                        url: "/signup/trgovac",
+                        data:JSON.stringify(obj),
+                        type:'POST',
+                        contentType:"application/json",
+                        beforeSend: function(){},
+                    })
+                        .done(function (){
+                            alert("Uspjesno ste kreirali racun");
+                            window.location.href = "/login";
+                        })
+                }
+            })
+                .done(function(){
+                    $.ajax({
+                        url: "/signup/trgovac",
+                        data:JSON.stringify(obj),
+                        type:'POST',
+                        contentType:"application/json",
+                        beforeSend: function(){},
+                    })
+                    .done(function (){
+                        alert("Uspjesno ste kreirali racun");
+                        window.location.href = "/login";
+                    })
+            })
+        }
+
+
+
+    </script>
+</head>
+<body>
+
+
+
+
+
+    <div class="container">
+        <div class="trgovacilikupacbox">
+            <div class="mainscreen">
+                <div class="left-container">
+                    <div class="box" onclick="trgovac()">
+                        <div class="pic1"></div>
+                        <h3>Trgovac</h3>
+                        <p>Otvorite svoju vlastitu trgovinu  u samo par klikova i udjite u svijet prodaje.... </p>
+                    </div>
+                </div>
+                <div class="right-container">
+                    <div class="box" onclick="kupac()">
+                        <div class="pic2"></div>
+                        <h3>Kupac</h3>
+                        <p>Kreirajte svoj racun kao kupac i zapocnite svoju kupovinu....</p>
+                    </div>
+                </div>
+            </div>
+            <h5 class="gobacktologin"> Have already an account? <a href="/login">Login here</a></h5>
+        </div>
+
+
+
+        <!----------------------------------------------     KUPAC      ------------------------------------------------------- -->
+
+
+
+
+        <form id="kupacsignup" class="mainbox-kupac hide">
+                <h5 class="goback" onclick="trgovacilikupac()"><--GO BACK</h5>
+                <h1 class="title">Create Account(Kupac)</h1>
+                <p>NAME</p>
+                <input id="kupac-name" type="text" name="name" value="" placeholder="Enter your name..." />
+                <p>SURNAME</p>
+                <input id="kupac-surname" type="text" name="surname" value="" placeholder="Enter your surname..."/>
+                <p>USERNAME</p>
+                <input id="kupac-username" type="text" name="username" value="" placeholder="Enter your username..."/>
+                <p>EMAIL</p>
+                <input id="kupac-email" type="email" name="email" value="" placeholder="Enter your email..." />
+                <p>ADRESS</p>
+                <input id="kupac-adresa" type="text" name="adresa" value="" placeholder="Enter your adress..." />
+                <p>PASSWORD</p>
+                <input id="kupac-password" type="password" name="password" value="" placeholder="Enter your password..."/>
+                <p>CONFIRM PASSWORD</p>
+                <input id="kupac-confirm" type="password" name="confirmpassword" value="" placeholder="Confirm your password..." />
+                <p>ADD PHOTO</p>
+                <input type="file" id="kupac_avatar" name="avatar" accept="image/png, image/jpeg" />
+                <div class="interesi">
+                    <h3>Interesi</h3>
+                    <%interesi.forEach(interes => { %>
+                        <div onclick="klikninadiv(<%=interes.id%>)" class="interes" id="<%=interes.id%>">
+                            <%=interes.naziv%>
+                        </div>
+                    <%})%>
+                </div>
+            <button class="signup" onclick="kreirajkupca()">SIGN UP</button>
+
+            <h5 class="alreadyaccount"> Have already an account? <a href="/login">Login here</a></h5>
+        </form>
+
+
+
+        <!----------------------------------------------     TRGOVAC      ------------------------------------------------------- -->
+
+
+
+        <form class="mainbox-trgovac hide">
+            <h5 class="goback" onclick="trgovacilikupac()"><--GO BACK</h5>
+            <h1 class="title">Create Account(Trgovac)</h1>
+            <p>NAME</p>
+            <input id="trgovac-name" type="text" name="name" value="" placeholder="Enter your name..." />
+            <p>SURNAME</p>
+            <input id="trgovac-surname" type="text" name="surname" value="" placeholder="Enter your surname..."/>
+            <p>USERNAME</p>
+            <input id="trgovac-username" type="text" name="username" value="" placeholder="Enter your username..."/>
+            <p>EMAIL</p>
+            <input id="trgovac-email" type="email" name="email" value="" placeholder="Enter your email..." />
+            <p>COUNTRY</p>
+            <input id="trgovac-drzava" type="text" name="drzava" value="" placeholder="Enter your country..." />
+            <p>CITY</p>
+            <input id="trgovac-grad" type="text"  name="city" value="" placeholder="Enter your city..." />
+            <p>ADDRESS</p>
+            <input id="trgovac-adresa" type="text" name="adresa" value="" placeholder="Enter your address..." />
+            <p>PASSWORD</p>
+            <input id="trgovac-password" type="password" name="password" value="" placeholder="Enter your password..."/>
+            <p>CONFIRM PASSWORD</p>
+            <input id="trgovac-confirm" type="password" name="confirmpassword" value="" placeholder="Confirm your password..." />
+            <p>ADD PHOTO</p>
+            <input type="file" id="trgovac_avatar" name="trgovac_avatar" accept="image/png, image/jpeg" />
+            <p>COMPANY NAME</p>
+            <input id="trgovina-ime" type="text" name="trgovina-ime" value="" placeholder="Enter your company name..." />
+            <p>COMPANY PHONE NUMBER</p>
+            <input id="trgovina-telefon" type="text" name="trgovina-broj" value="" placeholder="Enter your company phone number..."/>
+            <p>COMPANY ADDRESS</p>
+            <input id="trgovina-adresa" type="text" name="trgovina-adresa" value="" placeholder="Enter your company address..." />
+            <p>COMPANY LOGO(PHOTO)</p>
+            <input type="file" id="trgovina_avatar" name="trgovina_avatar" accept="image/png, image/jpeg" />
+            <button class="signup" onclick="kreirajtrgovca()">SIGN UP</button>
+
+            <h5 class="alreadyaccount"> Have already an account? <a href="/login">Login here</a></h5>
+        </form>
+    </div>
+</body>
+</html>

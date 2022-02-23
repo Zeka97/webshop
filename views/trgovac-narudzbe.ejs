@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel='stylesheet' href='/stylesheets/trgovac-narudzbe.css'/>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    <!-- PRepraviti trgovac narudzbe izgled  i napraviti artikle kolicina ako
+     ostane vremena kada se desi isporuka da se smanji kolicina ili obrise artikal ako je skroz prodan ili da ide u arhivirane aritkle-->
+
+    <script>
+        var niz = [];
+        function prikaziArtikle(key){
+            console.log(niz);
+            if(niz[key] === true){
+                niz[key] = false;
+                $("#" + "artikli_" + key).addClass("hide");
+                $("#" + "artikli_" + key).removeClass("artikli");
+                document.getElementById("prikaziartikle_" + key).innerHTML = "+";
+            }
+            else{
+                niz[key] = true;
+                $("#artikli_" + key).removeClass("hide");
+                $("#artikli_" + key).addClass("artikli");
+                document.getElementById("prikaziartikle_" + key).innerHTML = "-";
+            }
+        }
+
+        function prihvatiNarudzbu(key){
+
+
+                $.ajax({
+                    url: "/trgovac/prihvatinarudzbu/" + key,
+                    data:{},
+                    type:'POST',
+                    beforeSend: function(){}
+                }).done(function(data){
+                    alert("Narudzba uspjesno odobrena");
+                    location.reload();
+                })
+
+        }
+
+        function  odbijNarudzbu(key){
+                $.ajax({
+                    url:"/trgovac/odbijnarudzbu/" + key,
+                    data: {},
+                    type: 'POST',
+                    beforeSend: function (){}
+                }).done(function (){
+                    alert("Narudzba je odbijena!");
+                    location.reload();
+            })
+
+        }
+
+        function idiNaPocetnu(){
+            window.location.href= "/trgovac";
+        }
+
+
+    </script>
+</head>
+<body>
+    <div class="nazadnapocetnu">
+        <button onclick="idiNaPocetnu()">Nazad na pocetnu</button>
+    </div>
+    <div class="main-content">
+        <div class="naslov_narudzbi">
+            <p>ID</p>
+            <p>Narucilac</p>
+            <p>Datum narudzbe</p>
+            <p>Cijena</p>
+            <p>Status</p>
+            <p>Datum isporuke</p>
+            <p>Rok odobrenja zahtjeva</p>
+        </div>
+        <%for(let i = 0; i < narudzbe.length; i++){ %>
+        <div class="narudzbe">
+            <span><%=narudzbe[i].narudzba_id%></span>
+            <span><%=narudzbe[i].kupac_ime%> <%=narudzbe[i].kupac_prezime%></span>
+            <span><%=narudzbe[i].narudzba_datum_kreiranja_zahtjeva.toLocaleString('de-DE',{year: 'numeric', month: 'numeric', day: 'numeric'})%></span>
+            <span><%=narudzbe[i].narudzba_cijena%> KM</span>
+
+            <!--------------------------------------------------------------------------------------------------------------------------------->
+            <% if(narudzbe[i].narudzba_trgovac_odobrio == null){%>
+            <span>neobradjen</span>
+            <span>neodredjen</span>
+            <span><%=narudzbe[i].narudzba_datum_isteka_zahtjeva.toLocaleString('de-DE',{year: 'numeric', month: 'numeric', day: 'numeric'})%></span>
+            <%}%>
+            <!----------------------------------------------------------------------- -------------------------------------------------------->
+
+            <% if(narudzbe[i].narudzba_trgovac_odobrio === true && narudzbe[i].narudzba_kupac_ponistio !==true){%>
+                <span>Odobrena</span>
+                <span><%=narudzbe[i].narudzba_datum_isporuke_kupac.toLocaleString('de-DE',{year: 'numeric', month: 'numeric', day: 'numeric'})%></span>
+                <span>/</span>
+            <%}%>
+            <% if(narudzbe[i].narudzba_trgovac_odobrio === false){%>
+                <span>Odbijena</span>
+                <span>/</span>
+                <span>/</span>
+            <%}%>
+            <% if(narudzbe[i].narudzba_kupac_ponistio === true){%>
+                <span>kupac ponistio</span>
+                <span>/</span>
+                <span>/</span>
+            <%}%>
+            <div class="buttons">
+                <%
+                    let date = new Date();
+                    if(date < narudzbe[i].narudzba_datum_isteka_zahtjeva && narudzbe[i].narudzba_trgovac_odobrio == null){
+                %>
+                    <button onclick="odbijNarudzbu(<%=narudzbe[i].narudzba_id%>)">X</button>
+                    <button onclick="prihvatiNarudzbu(<%=narudzbe[i].narudzba_id%>)">Y</button>
+                <%}%>
+                <button id="prikaziartikle_<%=i%>" onclick="prikaziArtikle(<%=i%>)">+</button>
+            </div>
+        </div>
+        <div id="artikli_<%=i%>" class="hide">
+            <%for(let j = 0; j < artikli.length; j++){
+            if(artikli[j].narudzba_id === narudzbe[i].narudzba_id){ %>
+            <div>
+                <span><%=artikli[j].naziv%></span>
+                <span><%=artikli[j].kolicina%> kom</span>
+                <span><%=artikli[j].cijena %> KM</span>
+            </div>
+            <%}%>
+            <%}%>
+        </div>
+
+        <%}%>
+
+    </div>
+
+
+
+
+
+
+</div>
+</body>
+</html>

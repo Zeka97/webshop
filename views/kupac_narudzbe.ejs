@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel='stylesheet' href='/stylesheets/kupac_narudzbe.css'/>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    <script>
+        function signout(){
+            $.ajax({
+                url: "/kupac/signout",
+                data:{},
+                type:'GET',
+                beforeSend: function(){}
+            }).done(function(data){
+                window.location.href = "/login";
+            })
+        }
+        var niz = [];
+        function prikaziArtikle(key){
+            console.log(niz);
+            if(niz[key] === true){
+                niz[key] = false;
+                $("#" + "artikli_" + key).addClass("hide");
+                $("#" + "artikli_" + key).removeClass("artikli");
+                document.getElementById("prikaziartikle_" + key).innerHTML = "+";
+            }
+            else{
+                niz[key] = true;
+                $("#artikli_" + key).removeClass("hide");
+                $("#artikli_" + key).addClass("artikli");
+                document.getElementById("prikaziartikle_" + key).innerHTML = "-";
+            }
+        }
+
+        function prekiniNarudzbu(key){
+            $.ajax({
+                url: "/kupac/prekininarudzbu/" + key,
+                data:{},
+                type:'POST',
+                beforeSend: function(){}
+            }).done(function(){
+                alert("Uspjesno ste prekinuli narudzbu");
+                location.reload();
+            })
+        }
+
+
+    </script>
+</head>
+<body>
+<div class="kupac-naslovna">
+    <header class="header">
+        <nav><a href="/kupac">Pocetna</a></nav>
+        <nav><a href="/kupac/artikli">Artikli </a></nav>
+        <nav><a href="/kupac/trgovci">Trgovci</a></nav>
+        <nav><a href="/kupac/profil/<%=kupac.id%>"><%=kupac.ime%> <%=kupac.prezime%></a></nav>
+    </header>
+    <div class="main-content">
+        <div class="naslov_narudzbi">
+            <p>ID</p>
+            <p>Datum narudzbe</p>
+            <p>Cijena</p>
+            <p>Status</p>
+            <p>Datum isporuke</p>
+        </div>
+            <%for(let i = 0; i < narudzbe.length; i++){ %>
+                <div class="narudzbe">
+                    <span><%=narudzbe[i].narudzba_id%></span>
+                    <span><%=narudzbe[i].narudzba_datum_kreiranja_zahtjeva.toLocaleString('de-DE',{year: 'numeric', month: 'numeric', day: 'numeric'})%></span>
+                    <span><%=narudzbe[i].narudzba_cijena%> KM</span>
+                    <% if(narudzbe[i].narudzba_trgovac_odobrio == null){%>
+                        <span>Na cekanju</span>
+                        <span>/</span>
+                    <%}%>
+
+                    <% if(narudzbe[i].narudzba_trgovac_odobrio === false){%>
+                        <span>Odbijen</span>
+                        <span>/</span>
+                    <%}%>
+
+
+
+                    <% if(narudzbe[i].narudzba_trgovac_odobrio === true && narudzbe[i].narudzba_kupac_ponistio == null){%>
+                        <span>Odobren</span>
+                        <span><%=narudzbe[i].narudzba_datum_isporuke_kupac.toLocaleString('de-DE',{year: 'numeric', month: 'numeric', day: 'numeric'})%></span>
+                    <%}%>
+
+                    <%if(narudzbe[i].narudzba_kupac_ponistio === true){%>
+                        <span>Ponisteno</span>
+                        <span>/</span>
+
+                    <%}%>
+                    <%if(narudzbe[i].narudzba_status_narudzbe === true){%>
+                        <span>Isporuceno</span>
+                        <span><%=narudzbe[i].narudzba_datum_isporuke_kupac.toLocaleString('de-DE',{year: 'numeric', month: 'numeric', day: 'numeric'})%></span>
+                    <%}%>
+                    <div class="buttons">
+                        <%
+                            let datum = new Date();
+                            if(narudzbe[i].narudzba_datum_isporuke_kupac != null){
+                            if(datum < narudzbe[i].narudzba_datum_isporuke_kupac && narudzbe[i].narudzba_kupac_ponistio == null && narudzbe[i].narudzba_status_narudzbe === null){
+                        %>
+                            <button onclick="prekiniNarudzbu(<%=narudzbe[i].narudzba_id%>)">X</button>
+                        <%}}%>
+                        <button id="prikaziartikle_<%=i%>" onclick="prikaziArtikle(<%=i%>)">+</button>
+                    </div>
+                </div>
+        <div id="artikli_<%=i%>" class="hide">
+            <%for(let j = 0; j < artikli.length; j++){
+            if(artikli[j].narudzba_id === narudzbe[i].narudzba_id){ %>
+            <div>
+                <span><%=artikli[j].naziv%></span>
+                <span><%=artikli[j].kolicina%> kom</span>
+                <span><%=artikli[j].cijena %> KM</span>
+            </div>
+            <%}%>
+            <%}%>
+        </div>
+
+            <%}%>
+
+    </div>
+
+
+
+
+
+
+</div>
+</body>
+</html>

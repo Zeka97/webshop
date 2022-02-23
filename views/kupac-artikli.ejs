@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel='stylesheet' href='/stylesheets/kupac-artikli.css' />
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+
+
+        //srediti komentare dodati na artikle
+
+
+        var datum = true;
+        var cijena = true;
+        var korpa = [];
+
+
+        function posjetiTrgovca(){
+          let trgovac_id = document.getElementById('trgovac_id').innerHTML;
+            window.location.href = "/kupac/trgovina/" + trgovac_id;
+        }
+
+
+        function OrderBy(key){
+            let string;
+            if(key == "datum"){
+                if(datum){
+                string = key +"_objave" + " ASC";
+                datum = !datum;
+            }
+                else{
+                string = key + "_objave" +  " DESC";
+                datum = !datum;
+                }
+            }
+            else if(key == "cijena"){
+                if(cijena){
+                    string = key + " ASC";
+                    cijena = !cijena;
+                }
+                else{
+                    string = key + " DESC";
+                    cijena = !cijena;
+                }
+            }
+                $.ajax({
+                    url: "/kupac/artikli/" + string,
+                    data:{},
+                    type:'GET',
+                    contentType:'application/json',
+                    beforeSend: function(){}
+                }).done(function(){
+                    window.location.href = "/kupac/artikli/" + string;
+                })
+        }
+
+        function search() {
+
+            let string = document.getElementById("searchbar").value;
+            if(string === '') string = "null";
+
+            let e = document.getElementById("kategorije");
+            let id = e.value;
+
+                window.location.href ="/kupac/artikli/search/" + string + "/"  + id;
+        }
+        function signout(){
+            $.ajax({
+                url: "/kupac/signout",
+                data:{},
+                type:'GET',
+                beforeSend: function(){}
+            }).done(function(data){
+                window.location.href = "/login";
+            })
+
+
+        }
+
+        function openModal(obj){
+            console.log(obj);
+            let datum_objave = new Date(obj.artikal_datum_objave);
+            console.log(datum_objave);
+            console.log(datum_objave.getDate() + '/' + (datum_objave.getMonth()+1) + '/' + datum_objave.getFullYear() + " " + datum_objave.getHours() + ":" + datum_objave.getMinutes())
+            document.getElementById('trgovac_id').innerHTML = obj.id_trgovca;
+            document.getElementById('exampleModalLongTitle').innerHTML = obj.artikal_id;
+            document.getElementById('imgsrc').src = "../../uploads/" + obj.artikal_photo;
+            document.getElementById('naziv_artikla').innerHTML = obj.artikal_naziv;
+            document.getElementById('cijena_artikla').innerHTML = obj.artikal_cijena + " KM";
+            document.getElementById('naziv_trgovine').innerHTML = obj.trgovina_naziv;
+            document.getElementById('broj_telefona').innerHTML = obj.trgovina_telefon;
+            document.getElementById('trgovina_grad').innerHTML = obj.trgovina_grad;
+            document.getElementById('trgovina_adresa').innerHTML = obj.trgovina_adresa;
+            document.getElementById('datum_objave').innerHTML = datum_objave.getDate() + '/' + (datum_objave.getMonth()+1) + '/' + datum_objave.getFullYear() + " " + datum_objave.getHours() + ":" + datum_objave.getMinutes();
+            document.getElementById('opis_proizvoda').innerHTML = obj.artikal_opis;
+            document.getElementById('artikal_kolicina').innerHTML = obj.artikal_kolicina;
+        }
+
+
+
+    var showCart = false;
+    function openCart(){
+        showCart = !showCart;
+        if(showCart) {
+            $('#dropdown-cart').removeClass("hide");
+            $('#dropdown-cart').addClass("show_dropdown");
+        }
+
+        else{
+            $('#dropdown-cart').removeClass("show_dropdown");
+            $('#dropdown-cart').addClass("hide");
+        }
+        console.log(korpa);
+    }
+
+
+
+    </script>
+</head>
+<body>
+
+    <header class="header">
+        <nav><a href="/kupac">Pocetna</a></nav>
+        <nav><a href="/kupac/artikli">Artikli </a></nav>
+        <nav><a href="/kupac/trgovci">Trgovci </a></nav>
+        <nav><a href="/kupac/profil/<%=kupac.id%>"><%=kupac.ime%> <%=kupac.prezime%></a></nav>
+    </header>
+
+    <div class="searchdiv">
+
+        <input id="searchbar" type="text" name="proizvoda" value="" placeholder="Naziv proizvoda"/>
+        <select name="kategorije" id="kategorije" class="kategorije">
+            <option value="0" selected disabled>kategorija</option>
+            <%kategorije.forEach(k => {%>
+                <option  value="<%=k.id%>"><%=k.naziv%></option>
+            <%})%>
+        </select>
+        <select name="stanje" id="stanje" class="stanje">
+            <option value="stanje" selected disabled>Stanje</option>
+            <option value="sve">sve</option>
+            <option value="novo">Novo</option>
+            <option value="polovno">Polovno</option>
+        </select>
+        <button class="searchbtn" onclick="search()">PRETRAGA</button>
+
+    </div>
+    <div class="sortby">
+        <button id="datum" value="datum" onclick="OrderBy(document.getElementById('datum').value)">sort by Datum</button>
+        <button id="cijena" value="cijena" onclick="OrderBy(document.getElementById('cijena').value)">sort by Cijena</button>
+    </div>
+
+
+        <div class="artikli" id="artikli">
+            <%artikli.forEach(artikal => { %>
+            <div class="artikal" id="<%=artikal.id%>" data-toggle="modal" data-target="#exampleModalCenter" onclick="openModal(<%=JSON.stringify(artikal)%>)">
+                <div class="slika">
+                    <img src="/uploads/<%=artikal.artikal_photo%>" alt="slika-proizvoda" height="100%" width="100%"/>
+                </div>
+                <div class="opis">
+                    <h2><%=artikal.artikal_naziv%></h2>
+                    <p><%=artikal.artikal_opis%></p>
+                    <p><%=artikal.artikal_cijena%> KM</p>
+                    <p><%=artikal.artikal_datum_objave.toLocaleString("de-DE",{year: 'numeric', month: '2-digit', day: '2-digit'})%></p>
+                </div>
+            </div>
+            <%})%>
+        </div>
+
+    <div class="modal fade" id="exampleModalCenter" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle" style="display: none"></h5>
+                    <h5 id="trgovac_id" style="display:none"></h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-group header_artikla">
+                        <img class="modal-slika" id="imgsrc"/>
+                        <div class="o_artiklu">
+                                <h3 id="naziv_artikla"></h3>
+                                <h5 id="cijena_artikla"></h5>
+                                <p id="naziv_trgovine"></p>
+                                <div class="dodatne_kategorije">
+                                    <div>
+                                        <span>Stanje</span>
+                                        <p id="artikal_stanje">Novo</p>        <!--  DODATI DINAMICKI STANJE U FUNKCIJI openModal  -->
+                                    </div>
+                                    <div>
+                                        <span>Lokacija</span>
+                                        <p id="trgovina_grad"></p>
+                                    </div>
+                                    <div>
+                                        <span>Adresa</span>
+                                        <p id="trgovina_adresa"></p>
+                                    </div>
+                                    <div>
+                                        <span>Datum objave</span>
+                                        <p id="datum_objave"></p>
+                                    </div>
+                                    <div>
+                                        <span>Kontakt</span>
+                                        <p id="broj_telefona"></p>
+                                    </div>
+                                    <div>
+                                        <span>Kolicina</span>
+                                        <p id="artikal_kolicina"></p>
+                                    </div>
+
+
+                                </div>
+                        </div>
+                    </div>
+                    <div class="form-group artikal_opis">
+                        <h3>Opis</h3>
+                        <p id="opis_proizvoda"></p>
+                    </div>
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" onclick="posjetiTrgovca()">PosjetiTrgovca</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>

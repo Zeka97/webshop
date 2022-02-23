@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel='stylesheet' href='/stylesheets/admin-kategorije.css' />
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+        function dodajInteres(){
+            let interes = document.getElementById('naziv-interesa').value;
+            $.ajax({
+                url: "/admin/dodajinteres/" + interes,
+                data:{},
+                type:'POST',
+                beforeSend: function(){}
+            }).done(function(){
+                alert("Uspjesno ste dodali interes!");
+                location.reload()
+            })
+        }
+        function dodajKategoriju(){
+            let kategorija = document.getElementById('naziv-kategorije').value;
+            $.ajax({
+                url: "/admin/dodajkategoriju/" + kategorija,
+                data:{},
+                type:'POST',
+                beforeSend: function(){}
+            }).done(function(){
+                alert("Uspjesno ste dodali kategoriju!");
+                location.reload()
+            })
+        }
+
+        function obrisiKategoriju(key){
+            $.ajax({
+                url: "/admin/obrisikategoriju/" + key,
+                data:{},
+                type:'POST',
+                beforeSend: function(){}
+            }).done(function(){
+                alert("Uspjesno ste obrisali kategoriju!");
+                location.reload()
+            })
+        }
+
+        function obrisiInteres(key){
+            $.ajax({
+                url: "/admin/obrisiinteres/" + key,
+                data:{},
+                type:'POST',
+                beforeSend: function(){}
+            }).done(function(){
+                alert("Uspjesno ste obrisali interes!");
+                location.reload()
+            })
+        }
+
+        function signout(){
+            $.ajax({
+                url:"/admin/signout/",
+                data:{},
+                type:'POST',
+                beforeSend: function (){}
+            }).done(function (){
+                alert("Dovidjenja");
+                window.location.href = "/login";
+            })
+        }
+
+    </script>
+</head>
+<body>
+<div class="header">
+    <nav><a href="/admin/">Dashboard</a></nav>
+    <nav><a href="/admin/users">Useri</a></nav>
+    <nav><a href="/admin/kategorije">Kategorije</a></nav>
+    <nav><a onclick="signout()"> Sign out</a></nav>
+</div>
+<div class="main-content">
+    <div class="interesi">
+        <h3>Interesi</h3>
+        <%interesi.forEach(interes => { %>
+        <div class="interes" id="<%=interes.id%>">
+            <div class="svg-delete" onclick="obrisiInteres(<%=interes.id%>)"></div>
+            <span><%=interes.naziv%></span>
+        </div>
+        <%})%>
+        <div class="input-field">
+            <input type="text" name="interes" id="naziv-interesa" />
+            <button onclick="dodajInteres()">Dodaj interes</button>
+        </div>
+    </div>
+
+    <div class="interesi">
+        <h3>Kategorije</h3>
+        <%kategorije.forEach(kategorija => { %>
+        <div class="interes" id="<%=kategorija.id%>">
+            <div class="svg-delete" onclick="obrisiKategoriju(<%=kategorija.id%>)"></div>
+            <span><%=kategorija.naziv%></span>
+        </div>
+        <%})%>
+        <div class="input-field">
+            <input type="text" name="kategorija" id="naziv-kategorije" />
+            <button onclick="dodajKategoriju()">Dodaj interes</button>
+        </div>
+    </div>
+</div>
+</body>
+</html>

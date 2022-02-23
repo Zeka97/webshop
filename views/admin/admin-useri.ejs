@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel='stylesheet' href='/stylesheets/admin-useri.css'/>
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+
+    <script>
+        function blocktrgovac15days(key){
+            console.log(key);
+            console.log("123");
+            $.ajax({
+                url: "/admin/blocktrgovactemp/" + key,
+                data:{},
+                type:'POST',
+                beforeSend: function(){}
+            }).done(function(data){
+                alert("Uspjesno blokiran");
+                location.reload()
+
+            })
+        }
+
+        function odblokirajTrgovca(key){
+            $.ajax({
+                url: "/admin/trgovacodblokiraj/" + key,
+                data:{},
+                type:'POST',
+                beforeSend: function(){}
+            }).done(function(data){
+                alert("Uspjesno odblokiran");
+                location.reload();
+            })
+        }
+
+        function blockkupac15days(key){
+            $.ajax({
+                url: "/admin/blockkupactemp/" + key,
+                data:{},
+                type:'POST',
+                beforeSend: function(){}
+            }).done(function(data){
+                alert("Uspjesno blokiran");
+                location.reload()
+
+            })
+
+        }
+
+        function odblokirajKupca(key){
+            $.ajax({
+                url: "/admin/kupacodblokiraj/" + key,
+                data:{},
+                type:'POST',
+                beforeSend: function (){}
+            }).done(function(){
+                alert("Uspjesno odblokiran");
+                location.reload();
+            })
+        }
+
+        function blokirajkupcatrajno(key){
+            $.ajax({
+                url:"/admin/blokirajkupcatrajno/"+ key,
+                data:{},
+                type: 'POST',
+                beforeSend: function (){}
+            }).done(function(){
+                alert("uspjesno blokiran");
+                location.reload();
+            })
+        }
+
+        function blokirajtrgovcatrajno(key){
+            $.ajax({
+                url:"/admin/blokirajtrgovcatrajno/"+key,
+                data:{},
+                type:'POST',
+                beforeSend: function (){}
+            }).done(function (){
+                alert("uspjesno blokiran");
+                location.reload();
+            })
+        }
+    function signout(){
+        $.ajax({
+            url:"/admin/signout/",
+            data:{},
+            type:'POST',
+            beforeSend: function (){}
+        }).done(function (){
+            alert("Dovidjenja");
+            window.location.href = "/login";
+        })
+    }
+
+    function arhivirajKupca(key){
+        $.ajax({
+            url:"/admin/arhivirajkupca/"+ key,
+            data:{},
+            type:'POST',
+            beforeSend: function (){}
+        }).done(function (){
+            alert("Uspjesno arhiviran");
+            location.reload();
+        })
+    }
+
+    function arhivirajTrgovca(key){
+        $.ajax({
+            url:"/admin/arhivirajtrgovca/"+ key,
+            data:{},
+            type:'POST',
+            beforeSend: function (){}
+        }).done(function (){
+            alert("Uspjesno arhiviran");
+            location.reload();
+        })
+    }
+
+    function odarhivirajKupca(key){
+        $.ajax({
+            url:"/admin/odarhivirajkupca/"+ key,
+            data:{},
+            type:'POST',
+            beforeSend: function (){}
+        }).done(function (){
+            alert("Uspjesno ste uklonili sa liste arhiviranih");
+            location.reload();
+        })
+    }
+
+        function odarhivirajTrgovca(key){
+            $.ajax({
+                url:"/admin/odarhivirajtrgovca/"+ key,
+                data:{},
+                type:'POST',
+                beforeSend: function (){}
+            }).done(function (){
+                alert("Uspjesno ste uklonili sa liste arhiviranih");
+                location.reload();
+            })
+        }
+
+    </script>
+
+
+
+
+</head>
+<body>
+<div class="header">
+    <nav><a href="/admin/">Dashboard</a></nav>
+    <nav><a href="/admin/users">Useri</a></nav>
+    <nav><a href="/admin/kategorije">Kategorije</a></nav>
+    <nav><a onclick="signout()"> Sign out</a></nav>
+</div>
+    <div class="main-content">
+        <div class="users_header">
+            <p>Ime i Prezime</p>
+            <p>Adresa</p>
+            <p>Email</p>
+            <p>Blokiran</p>
+            <p>Status</p>
+            <p>Blok</p>
+        </div>
+
+        <%kupci.forEach(kupac => {%>
+            <div class="users">
+                <span><%=kupac.ime%> <%=kupac.prezime%></span>
+                <span><%=kupac.adresa%></span>
+                <span><%=kupac.email%></span>
+                <%if(kupac.block_timestamp){%>
+                    <span>Blokiran do  <%=kupac.block_timestamp.toLocaleString('de-DE',{year: 'numeric', month: 'numeric', day: 'numeric'})%></span>
+                <%}%>
+                <%if(kupac.blocked_forever){%>
+                    <span>trajno blokiran</span>
+                <%}%>
+                <%if(kupac.block_timestamp == null && kupac.blocked_forever !== true){%>
+                    <span>/</span>
+                <%}%>
+                <%if(kupac.arhiv_status !== true){%>
+                    <span>aktivan</span>
+                <%}%>
+                <%if(kupac.arhiv_status === true) {%>
+                    <span>arhiviran</span>
+                <%}%>
+                <div class="buttons">
+                    <%if(kupac.block_timestamp == null && kupac.blocked_forever !== true){%>
+                        <button onclick="blockkupac15days(<%=kupac.id%>)">15 dana</button>
+                        <button onclick="blokirajkupcatrajno(<%=kupac.id%>)">Trajno</button>
+                    <%}%>
+                    <%if(kupac.block_timestamp != null || kupac.blocked_forever === true){%>
+                        <button onclick="odblokirajKupca(<%=kupac.id%>)">Odblokiraj</button>
+                    <%}%>
+                    <%if(kupac.arhiv_status !== true){%>
+                        <button onclick="arhivirajKupca(<%=kupac.id%>)">Arhiviraj</button>
+                    <%}%>
+                    <%if(kupac.arhiv_status === true){%>
+                        <button onclick="odarhivirajKupca(<%=kupac.id%>)">OdArhiviraj</button>
+                    <%}%>
+                </div>
+                <button>+</button>
+            </div>
+        <%})%>
+
+        <%trgovci.forEach(trgovac => {%>
+        <div class="users">
+            <span><%=trgovac.ime%> <%=trgovac.prezime%></span>
+            <span><%=trgovac.adresa%></span>
+            <span><%=trgovac.email%></span>
+            <%if(trgovac.block_timestamp){%>
+            <span>Blokiran do  <%=trgovac.block_timestamp.toLocaleString('de-DE',{year: 'numeric', month: 'numeric', day: 'numeric'})%></span>
+            <%}%>
+            <%if(trgovac.blocked_forever){%>
+                <span>trajno blokiran</span>
+            <%}%>
+            <%if(trgovac.block_timestamp == null && trgovac.blocked_forever !== true){%>
+                <span>/</span>
+            <%}%>
+            <%if(trgovac.arhiv_status !== true){%>
+                <span>aktivan</span>
+            <%}%>
+            <%if(trgovac.arhiv_status === true) {%>
+                <span>arhiviran</span>
+            <%}%>
+            <div class="buttons">
+                <%if(trgovac.block_timestamp == null && trgovac.blocked_forever !== true){%>
+                    <button onclick="blocktrgovac15days(<%=trgovac.idt%>)">15 dana</button>
+                    <button onclick="blokirajtrgovcatrajno(<%=trgovac.idt%>)">Trajno</button>
+                <%}%>
+                <%if(trgovac.block_timestamp != null || trgovac.blocked_forever === true){%>
+                    <button onclick="odblokirajTrgovca(<%=trgovac.idt%>)">Odblokiraj</button>
+                <%}%>
+                <%if(trgovac.arhiv_status !== true){%>
+                    <button onclick="arhivirajTrgovca(<%=trgovac.id%>)">Arhiviraj</button>
+                <%}%>
+                <%if(trgovac.arhiv_status === true){%>
+                    <button onclick="odarhivirajTrgovca(<%=trgovac.id%>)">odArhiviraj</button>
+                <%}%>
+            </div>
+            <button>+</button>
+        </div>
+
+        <%})%>
+
+
+
+
+
+    </div>
+
+</body>
+</html>
